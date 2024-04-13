@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('subscription_id');
             $table->foreign('subscription_id')->references('subscription_id')->on('subscriptions')->onDelete('cascade');
             $table->unsignedBigInteger('voucher_id');
-            $table->foreignId('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
+            $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
             $table->integer('availability');
 
         });
