@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id('event_id');
+            $table->string('event_name');
+            $table->text('event_description');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->double('event_price');
+            $table->string('event_location');
+            $table->enum('event_status',['Active','Pending', 'Cancelled', 'Completed']);
         });
     }
 

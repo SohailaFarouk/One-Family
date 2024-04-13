@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Parents;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Validator;
@@ -15,15 +15,16 @@ class UserController extends Controller
 { 
     public function register(Request $request)
     {
+
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'DOB' => 'required',
             'address' => 'required',
-            'nat_id' => 'required|numeric', // Remove 'in:14' validation unless nat_id must be exactly 14
+            'nat_id' => 'required|numeric|',
             'gender' => 'required',
             'marital_status' => 'required'
         ]);
@@ -35,7 +36,6 @@ class UserController extends Controller
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'DOB' => $request->DOB,
@@ -48,21 +48,32 @@ class UserController extends Controller
         $parent = Parents::create([
             'user_id' => $user->id
         ]);
+        
     
         return response()->json(['message' => 'User registered successfully', 'user' => $user]);
     }
     
     public function login(Request $request)
-    {
-        $credentials = $request->only('username', 'password');
-    
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
-            return response()->json(['token' => $token, 'user' => $user]);
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+{
+    $credentials = $request->only('email', 'password');
 
+    // Retrieve the user with the provided email
+    $user = DB::table('users')
+        ->where('email', $credentials['email'])
+        ->first();
+
+    if ($user &&  $user->password) {
+        if ($user->role === 'admin') {
+            return response()->json(['message' => 'Login successful as admin']);
+        } elseif ($user->role === 'parent') {
+            return response()->json(['message' => 'Login successful as parent']);
+        } elseif ($user->role === 'doctor') {
+            return response()->json(['message' => 'Login successful as doctor']);
+        }
+    }
+
+    return response()->json(['error' => 'Invalid username or password']);
 }
+
+
 }

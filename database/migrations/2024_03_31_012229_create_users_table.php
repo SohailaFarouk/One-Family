@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id('user_id');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('password');
             $table->date('date_of_birth');
@@ -23,6 +22,7 @@ return new class extends Migration
             $table->string('nat_id', 14)->unique();
             $table->enum('gender', ['male', 'female']);
             $table->enum('marital_status', ['married', 'single'])->default('single');
+            $table->enum('role',['parent','admin','doctor'])->default('parent');
         });
     }
 

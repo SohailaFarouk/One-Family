@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('feedback_id');
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
+            $table->string('feedback_content');
         });
     }
 

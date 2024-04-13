@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id('subscription_id');
+        Schema::create('fawries', function (Blueprint $table) {
             $table->unsignedBigInteger('payment_id');
             $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
-            $table->enum('subscription_plan',['premium', 'regular'])->default('regular');
-            $table->date('subscription_date');
-            $table->double('subscription_price');
+            $table->text('fawry_code');
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('fawries');
     }
 };

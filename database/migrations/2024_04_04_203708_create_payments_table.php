@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('doctors')->onDelete('cascade');
+            $table->double('payment_amount');
+            $table->enum('payment_method',['card','fawry','mobile_wallet']);
         });
     }
 

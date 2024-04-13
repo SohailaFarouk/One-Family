@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreign('subscription_id')->references('subscription_id')->on('subscriptions')->onDelete('cascade');
             $table->unsignedBigInteger('voucher_id');
             $table->foreignId('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
+            $table->integer('availability');
+
         });
     }
 

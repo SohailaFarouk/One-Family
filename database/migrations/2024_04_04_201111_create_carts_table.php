@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
+            $table->double('total_amount');
             
         });
     }
