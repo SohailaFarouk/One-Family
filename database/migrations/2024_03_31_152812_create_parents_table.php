@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('parents', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->primary();
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade'); 
-            $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('event_id')->nullable()->default(null);
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
-            $table->unsignedBigInteger('subscription_id');
+            $table->unsignedBigInteger('subscription_id')->nullable()->default(null);
             $table->foreign('subscription_id')->references('subscription_id')->on('subscriptions')->onDelete('cascade');
-            $table->unsignedBigInteger('voucher_id');
+            $table->unsignedBigInteger('voucher_id')->nullable()->default(null);
             $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
-            $table->integer('availability');
+            $table->integer('availability')->nullable()->default(null);
 
         });
     }

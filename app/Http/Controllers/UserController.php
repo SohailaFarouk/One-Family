@@ -22,7 +22,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'DOB' => 'required',
+            'date_of_birth' => 'required',
             'address' => 'required',
             'nat_id' => 'required|numeric|',
             'gender' => 'required',
@@ -38,14 +38,14 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'DOB' => $request->DOB,
+            'date_of_birth' => $request->date_of_birth,
             'address' => $request->address,
             'nat_id' => $request->nat_id,
             'gender' => $request->gender,
             'marital_status' => $request->marital_status
         ]);
     
-        $parent = Parents::create([
+        Parents::create([
             'user_id' => $user->id
         ]);
         
@@ -53,27 +53,37 @@ class UserController extends Controller
         return response()->json(['message' => 'User registered successfully', 'user' => $user]);
     }
     
+
     public function login(Request $request)
-{
-    $credentials = $request->only('email', 'password');
-
-    // Retrieve the user with the provided email
-    $user = DB::table('users')
-        ->where('email', $credentials['email'])
-        ->first();
-
-    if ($user &&  $user->password) {
+    {
+      $credentials = $request->only('email', 'password');
+    
+      $user = DB::table('users')
+              ->where('email', $credentials['email'])
+              ->first();
+      
+      if ($user && $user->password){
+        $token = bin2hex(random_bytes(16)); // Generate a random 32-character token
         if ($user->role === 'admin') {
-            return response()->json(['message' => 'Login successful as admin']);
-        } elseif ($user->role === 'parent') {
-            return response()->json(['message' => 'Login successful as parent']);
-        } elseif ($user->role === 'doctor') {
-            return response()->json(['message' => 'Login successful as doctor']);
+            return response()->json(['message' => 'Login successful as admin' , 'role' => 'admin' , 'token' => $token]);
         }
+        if ($user->role === 'parent') {
+            return response()->json(['message' => 'Login successful as parent' , 'role' => 'parent' , 'token' => $token]);
+        }
+        if ($user->role === 'doctor') {
+            return response()->json(['message' => 'Login successful as doctor' , 'role' => 'doctor' , 'token' => $token]);
+        }
+      }
+    
+      return response()->json(['error' => 'Invalid username or password'], 401);
     }
 
-    return response()->json(['error' => 'Invalid username or password']);
+    public function logout(Request $request)
+{
+    $token = $request->header('Authorization');
+    return response()->json(['message' => 'you are Logged out']);
 }
+
 
 
 }

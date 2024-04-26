@@ -9,6 +9,10 @@ class Voucher extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable=[
+        'voucher_code',
+        'voucher_percentage'
+    ];
 
     public function payment()
     {

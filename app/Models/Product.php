@@ -9,6 +9,14 @@ class Product extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable=[
+        'product_name',
+        'product_description',
+        'product_specification',
+        'product_price',
+        'product_type',
+        'product_image'
+    ];
 
     public function parents()
     {

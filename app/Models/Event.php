@@ -9,6 +9,16 @@ class Event extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable=[
+        'event_name',
+        'event_description',
+        'start_date',
+        'end_date',
+        'event_price',
+        'event_location',
+        'event_status'
+    ];
+    protected $primaryKey = 'event_id';
 
     public function admin()
     {
