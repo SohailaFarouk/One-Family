@@ -14,8 +14,8 @@ class Appointment extends Model
     {
         return $this->hasOne(Session::class);
     }
-    public function doctor()
+    public function doctors()
     {
-        return $this->belongsToMany(Doctor::class);
+        return $this->belongsToMany(Doctor::class, 'doctor_appointment', 'appointment_id', 'user_id');
     }
 }
