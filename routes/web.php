@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\AppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,4 +48,13 @@ Route::group(['prefix' => 'vouchers'], function () {
     Route::get('/show', [VoucherController::class, 'show']); // Show details of an voucher
     Route::put('/update', [VoucherController::class, 'update']); // Update an voucher
     Route::delete('/delete', [VoucherController::class, 'destroy']); // Delete an voucher
+});
+
+Route::group(['prefix' => 'appointments'], function () {
+    Route::get('/', [AppointmentController::class, 'index']); // Get all appointments
+    Route::post('/store', [AppointmentController::class, 'store']); // store a new appointments
+});
+Route::group(['prefix' => 'sessions'], function () {
+    Route::get('/', [SessionController::class, 'index']); // Get all session
+    Route::post('/store', [SessionController::class, 'store']); // store a new session
 });

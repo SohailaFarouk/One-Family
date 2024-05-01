@@ -6,6 +6,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\SessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +51,21 @@ Route::group(['prefix' => 'vouchers'], function () {
     Route::get('/show', [VoucherController::class, 'show']); // Show details of an voucher
     Route::put('/update', [VoucherController::class, 'update']); // Update an voucher
     Route::delete('/delete', [VoucherController::class, 'destroy']); // Delete an voucher
+});
+
+// Route::group(['prefix' => 'feedbacks'], function () {
+//     Route::get('/', [FeedbackController::class, 'index']); // Get all feedbacks
+//     Route::post('/make', [FeedbackController::class, 'make']); // make a new feedback
+// });
+
+
+Route::group(['prefix' => 'appointments'], function () {
+    Route::get('/', [AppointmentController::class, 'index']); // Get all appointments
+    Route::post('/store', [AppointmentController::class, 'store']); // store a new appointments
+});
+Route::group(['prefix' => 'sessions'], function () {
+    Route::get('/', [SessionController::class, 'index']); // Get all session
+    Route::post('/store', [SessionController::class, 'store']); // store a new session
 });
 
 

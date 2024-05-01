@@ -9,6 +9,13 @@ class Appointment extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $primaryKey = 'appointment_id';
+
+    protected $fillable = [
+        'appointment_date',
+    ];
+
+
 
     public function session()
     {

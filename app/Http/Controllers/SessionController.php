@@ -21,7 +21,7 @@ class SessionController extends Controller
             'session_date' => 'required|date',
             'session_fees' => 'required|numeric',
             'session_time' => 'required|date_format:H:i',
-            'session_type' => 'required|in:Therapist,Psychiatrist,Physiatrist,Prosthetist'
+            'session_type' => 'required|in:Therapy,Psychiatry,Physiatry,Prosthetics'
         ]);
 
         if ($validator->fails()) {

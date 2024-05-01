@@ -23,10 +23,6 @@ class Session extends Model
     {
         return $this->belongsTo(Cart::class);
     }
-    public function doctor()
-    {
-        return $this->belongsToMany(Doctor::class , 'doctor_id', 'id');
-    }
     public function parent()
     {
         return $this->belongsTo(Parents::class);
@@ -35,6 +31,10 @@ class Session extends Model
     public function getAvailabilityAttribute()
     {
         return $this->sessions()->count();
+    }
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class); 
     }
 
 }
