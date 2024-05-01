@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id('subscription_id');
-            $table->unsignedBigInteger('payment_id');
+            $table->unsignedBigInteger('payment_id')->nullable()->default(null);
             $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
             $table->enum('subscription_plan',['premium', 'regular'])->default('regular');
             $table->date('subscription_date');

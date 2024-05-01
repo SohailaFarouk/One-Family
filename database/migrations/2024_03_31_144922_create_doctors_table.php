@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->primary();
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->integer('experience_years');
-            $table->text('medical_profession');
+            $table->enum('medical_profession',['Therapist','Psychiatrist','Physiatrist','Prosthetist']);
             $table->text('clinic_address');
          });
     }

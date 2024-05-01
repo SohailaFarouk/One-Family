@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('admin_payment', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('admins')->onDelete('cascade');
-            $table->unsignedBigInteger('payment_id');
+            $table->unsignedBigInteger('payment_id')->nullable()->default(null);
             $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
             $table->string('sales_report')->nullable();
             //المفروض أعمل فايل عشان يبقي ستوردج للتخزين        

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('admin_feedback', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('user_id')->on('admins')->onDelete('cascade');
-            $table->unsignedBigInteger('feedback_id');
+            $table->unsignedBigInteger('feedback_id')->nullable()->default(null);
             $table->foreign('feedback_id')->references('feedback_id')->on('feedbacks')->onDelete('cascade');
         });
     }

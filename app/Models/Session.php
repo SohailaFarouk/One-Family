@@ -9,19 +9,32 @@ class Session extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['patient_list'];
-
-    public function parent()
-    {
-        return $this->belongsTo(Parents::class);
-    }
-    public function appointment()
-    {
-        return $this->belongsTo(Appointment::class);
-    }
-
+    protected $primaryKey = 'session_id';
+    protected $fillable = [
+        'appointment_id',
+        'user_id',
+        'cart_id',
+        'session_type',
+        'session_fees',
+        'session_time',
+        'session_date'
+    ];
     public function cart()
     {
         return $this->belongsTo(Cart::class);
     }
+    public function doctor()
+    {
+        return $this->belongsToMany(Doctor::class , 'doctor_id', 'id');
+    }
+    public function parent()
+    {
+        return $this->belongsTo(Parents::class);
+    }
+
+    public function getAvailabilityAttribute()
+    {
+        return $this->sessions()->count();
+    }
+
 }

@@ -13,18 +13,16 @@ return new class extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->id('session_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable()->default(null);
             $table->foreign('user_id')->references('user_id')->on('parents')->onDelete('cascade');
-            $table->unsignedBigInteger('cart_id');
+            $table->unsignedBigInteger('cart_id')->nullable()->default(null);
             $table->foreign('cart_id')->references('cart_id')->on('carts')->onDelete('cascade');
-            $table->unsignedBigInteger('appointment_id');
+            $table->unsignedBigInteger('appointment_id')->nullable()->default(null);
             $table->foreign('appointment_id')->references('appointment_id')->on('appointments')->onDelete('cascade');
-            $table->integer('availability');
-            $table->enum('session_type',['Therapist','Psychiatrist','Physiatrist','Prosthetist']);
+            $table->enum('session_type',['Therapy','Psychiatry','Physiatry','Prosthetics ']);
             $table->double('session_fees');
             $table->time('session_time');
             $table->date('session_date');
-            $table->string('patient_list');
         });
     }
 
