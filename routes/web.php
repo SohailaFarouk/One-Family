@@ -57,4 +57,5 @@ Route::group(['prefix' => 'appointments'], function () {
 Route::group(['prefix' => 'sessions'], function () {
     Route::get('/', [SessionController::class, 'index']); // Get all session
     Route::post('/store', [SessionController::class, 'store']); // store a new session
+    Route::post('/reserve', [SessionController::class, 'reserve']); //
 });

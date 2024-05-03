@@ -9,6 +9,8 @@ class Feedback extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    public $primaryKey = 'feedback_id';
+
 
     public function order()
     {

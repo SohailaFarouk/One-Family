@@ -9,6 +9,7 @@ class Subscription extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    public $primaryKey='subscription_id';
 
     public function payment()
     {

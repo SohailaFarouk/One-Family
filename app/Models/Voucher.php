@@ -9,6 +9,7 @@ class Voucher extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    public $primaryKey = 'voucher_id';
     protected $fillable=[
         'voucher_code',
         'voucher_percentage'

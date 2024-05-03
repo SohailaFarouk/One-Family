@@ -26,7 +26,7 @@ class Parents extends Model
     }
     public function session()
     {
-        return $this->hasMany(Session::class);
+        return $this->hasMany(Session::class , 'user_id');
     }
     public function children()
     {

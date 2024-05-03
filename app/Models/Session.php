@@ -23,18 +23,18 @@ class Session extends Model
     {
         return $this->belongsTo(Cart::class);
     }
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class); 
+    }
     public function parent()
     {
-        return $this->belongsTo(Parents::class);
+        return $this->belongsTo(Parents::class , 'user_id' );
     }
 
     public function getAvailabilityAttribute()
     {
         return $this->sessions()->count();
-    }
-    public function appointment()
-    {
-        return $this->belongsTo(Appointment::class); 
     }
 
 }

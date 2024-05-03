@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Session;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class SessionController extends Controller
@@ -21,7 +22,7 @@ class SessionController extends Controller
             'session_date' => 'required|date',
             'session_fees' => 'required|numeric',
             'session_time' => 'required|date_format:H:i',
-            'session_type' => 'required|in:Therapy,Psychiatry,Physiatry,Prosthetics'
+            'session_type' => 'required|in:Therapist,Psychiatrist,Physiatrist,Prosthetist'
         ]);
 
         if ($validator->fails()) {
@@ -54,4 +55,33 @@ class SessionController extends Controller
 
         return response()->json(['message' => 'Session created successfully', 'session data' => $session]);
     }
+    public function reserve(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'user_id' => 'required|exists:parents,user_id',
+        'session_id' => 'required|exists:sessions,session_id',
+    ]);
+
+    // Retrieve the session
+    $session = Session::find($request->session_id);
+
+    // Check if the session exists
+    if (!$session) {
+        return response()->json(['message' => 'Session not found.'], 404);
+    }
+
+    // Check if the session is already reserved
+    if ($session->user_id !== null) {
+        return response()->json(['message' => 'Session already reserved.'], 400);
+    }
+
+    DB::table('sessions')
+        ->where('session_id', $request->session_id)
+        ->update(['user_id' => $request->user_id]);
+
+    return response()->json(['message' => 'Session reserved successfully.'], 201);
+}
+
+    
 }
