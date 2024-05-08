@@ -6,8 +6,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SessionController;
 
@@ -37,6 +35,8 @@ Route::group(['prefix' => 'products'], function () {
     Route::get('/show', [ProductController::class, 'show']);
     Route::put('/update', [ProductController::class, 'update']); 
     Route::delete('/delete', [ProductController::class, 'destroy']); 
+    Route::post('/shop', [ProductController::class, 'shop']); //parent can reserve a product
+
 });
 Route::group(['prefix' => 'events'], function () {
     Route::get('/', [EventController::class, 'index']); // Get all events

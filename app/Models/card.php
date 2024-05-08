@@ -9,6 +9,8 @@ class card extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $table = 'cards';
+
     protected $fillable = [
         'card_number',
         'cardholder_name',

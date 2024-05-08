@@ -17,7 +17,7 @@ class Parents extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class)->withPivot('quantity');
+        return $this->belongsToMany(Product::class , 'parent_product','product_id','user_id' );
     }
 
     public function event()

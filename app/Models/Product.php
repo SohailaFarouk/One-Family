@@ -16,16 +16,17 @@ class Product extends Model
         'product_specification',
         'product_price',
         'product_type',
-        'product_image'
+        'product_image',
+        'quantity',
     ];
 
     public function parents()
     {
-        return $this->belongsToMany(Parents::class)->withPivot('quantity');
+        return $this->belongsToMany(Parents::class , 'parent_product','product_id','user_id' );
     }
     public function admin()
     {
-        return $this->belongsToMany(Admin::class);
+        return $this->belongsToMany(Admin::class , 'admin_product','product_id','user_id');
     }
     public function cart()
     {

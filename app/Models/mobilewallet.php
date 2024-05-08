@@ -9,6 +9,8 @@ class mobilewallet extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $table = 'mobilewallets';
+
     protected $fillable =[
         'mobile_number'
     ];

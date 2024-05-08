@@ -22,8 +22,11 @@ class ProductController extends Controller
             'product_description' => 'required|string',
             'product_specification' => 'nullable|string',
             'product_price' => 'required|numeric|min:0',
+            'quantity' => 'nullable|',
             'product_type' => 'required|string|in:Books,Coloring Books,Medications,Prosthetic Tools',
-            'product_image' => 'nullable|image|max:2048'
+            'product_image' => 'nullable|image|max:2048',
+            'user_id' => 'required|exists:admins,user_id',
+
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -34,11 +37,16 @@ class ProductController extends Controller
         $product->product_specification = $request->input('product_specification');
         $product->product_price = $request->input('product_price');
         $product->product_type = $request->input('product_type');
+        $product->quantity = $request->input('quantity');
+
         if ($request->hasFile('product_image')) {
             $imagePath = $request->file('product_image')->store('product_images');
             $product->product_image = $imagePath;
         }
         $product->save();
+
+        $admin_id = $request->input('user_id');
+        $product->admin()->attach($admin_id);
 
         return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
     }
@@ -83,6 +91,9 @@ class ProductController extends Controller
         if ($request->filled('product_type')) {
             $product->product_type = $request->input('product_type');
         }
+        if ($request->filled('quantity')) {
+            $product->quantity = $request->input('quantity');
+        }
         if ($request->hasFile('product_image')) {
             $imagePath = $request->file('product_image')->store('product_images');
             $product->product_image = $imagePath;
@@ -108,4 +119,30 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product deleted successfully']);
     }
+    public function shop(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:parents,user_id',
+            'product_id' => 'required|exists:products,product_id',
+            'quantity' => 'required|integer|min:1|exists:products,quantity'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
+    
+        $product = Product::find($request->input('product_id'));
+    
+        if (!$product || $product->quantity < $request->input('quantity')) {
+            return response()->json(['error' => 'Product not available in the requested quantity'], 404);
+        }
+    
+        // If the product is available, you can proceed with the reservation process
+        $user_id = $request->input('user_id');
+        $quantity = $request->input('quantity');
+        $product->parents()->attach($user_id, ['quantity' => $quantity]);
+        $product->quantity -= $quantity;
+        $product->save();
+        return response()->json(['message' => 'Product reserved successfully']);
+    }
+    
 }

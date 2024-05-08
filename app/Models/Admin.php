@@ -12,7 +12,7 @@ class Admin extends Model
 
     public function product()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class , 'admin_product','product_id','user_id');
     }
 
     public function event()

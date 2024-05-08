@@ -23,6 +23,7 @@ return new class extends Migration
             $table->double('session_fees');
             $table->time('session_time');
             $table->date('session_date');
+            
         });
     }
 

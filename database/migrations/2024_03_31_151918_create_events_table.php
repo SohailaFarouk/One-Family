@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->double('event_price');
             $table->string('event_location');
-            $table->enum('event_status',['Active','Pending', 'Cancelled', 'Completed']);
+            $table->enum('event_status',['On going', 'Cancelled', 'Completed']);
         });
     }
 

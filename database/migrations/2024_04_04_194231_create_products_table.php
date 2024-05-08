@@ -19,6 +19,8 @@ return new class extends Migration
             $table->double('product_price');
             $table->enum('product_type',['Books','Coloring Books','Medications','Prosthetic Tools']);
             $table->string('product_image');
+            $table->integer('quantity')->nullable()->default(null);
+
         });
     }
 

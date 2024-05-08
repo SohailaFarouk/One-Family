@@ -28,7 +28,7 @@ class EventController extends Controller
             'event_location' => 'required|string',
             'start_date' => 'required',
             'end_date' => 'required',            
-            'event_status' => 'required|string|in:Active,Pending,Cancelled,Completed',
+            'event_status' => 'required|string|in:On going,Cancelled,Completed',
         ]);
 
         // If validation fails, return the validation errors
@@ -122,4 +122,6 @@ class EventController extends Controller
 
         return response()->json(['message' => 'event deleted successfully']);
     }
+    /* -------------------------------------------------------------------------- */
+    
 }
