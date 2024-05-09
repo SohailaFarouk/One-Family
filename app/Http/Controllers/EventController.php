@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Parents;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
@@ -123,5 +124,26 @@ class EventController extends Controller
         return response()->json(['message' => 'event deleted successfully']);
     }
     /* -------------------------------------------------------------------------- */
-    
+    public function reserve(Request $request ){
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:parents,user_id',
+                'event_id' => 'required|exists:events,event_id',
+            ]);
+        
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 422);
+            }
+        
+            $event = Event::find($request->input('event_id'));
+
+            if (!$event || $event->event_status === 'Cancelled') {
+                return response()->json(['error' => 'The event is cancelled'], 404);
+            } 
+            DB::table('parents')
+            ->where('user_id', $request->user_id)
+            ->update(['event_id' => $request->event_id]);   
+
+            return response()->json(['message' => 'Event reserved successfully']);
+        
+    }
 }

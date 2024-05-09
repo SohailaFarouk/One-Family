@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id('payment_id');
             $table->unsignedBigInteger('voucher_id')->nullable()->default(null);
             $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
+            $table->unsignedBigInteger('subscription_id')->nullable()->default(null);
+            $table->unsignedBigInteger('order_id')->nullable()->default(null);
+            $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
+            $table->foreign('subscription_id')->references('subscription_id')->on('subscriptions')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->nullable()->default(null);
             $table->foreign('user_id')->references('user_id')->on('doctors')->onDelete('cascade');
             $table->double('payment_amount');

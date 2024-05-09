@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id('order_id');
-            $table->unsignedBigInteger('payment_id')->nullable()->default(null);
-            $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
             $table->integer('order_number');
             $table->text('order_details');
             $table->double('order_amount');

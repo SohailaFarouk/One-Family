@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::group(['prefix' => 'products'], function () {
     Route::get('/show', [ProductController::class, 'show']); // Show details of a product
     Route::put('/update', [ProductController::class, 'update']); // Update a product
     Route::delete('/delete', [ProductController::class, 'destroy']); // Delete a product
+    Route::post('/shop', [ProductController::class, 'shop']); //parent can reserve a product
+
 });
 Route::group(['prefix' => 'events'], function () {
     Route::get('/', [EventController::class, 'index']); // Get all events
@@ -41,6 +44,8 @@ Route::group(['prefix' => 'events'], function () {
     Route::get('/show', [EventController::class, 'show']); // Show details of an event
     Route::put('/update', [EventController::class, 'update']); // Update an event
     Route::delete('/delete', [EventController::class, 'destroy']); // Delete an event
+    Route::post('/reserve', [EventController::class, 'reserve']); // parent Reserve an event
+
 });
 Route::group(['prefix' => 'vouchers'], function () {
     Route::get('/', [VoucherController::class, 'index']); // Get all vouchers
@@ -59,3 +64,6 @@ Route::group(['prefix' => 'sessions'], function () {
     Route::post('/store', [SessionController::class, 'store']); // store a new session
     Route::post('/reserve', [SessionController::class, 'reserve']); //
 });
+Route::post('/subscriptionplans',[SubscriptionController::class, 'subscriptionCard']);
+
+Route::post('/subscribe',[SubscriptionController::class, 'subscribe']);

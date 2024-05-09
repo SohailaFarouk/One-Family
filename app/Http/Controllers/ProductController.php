@@ -136,7 +136,6 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not available in the requested quantity'], 404);
         }
     
-        // If the product is available, you can proceed with the reservation process
         $user_id = $request->input('user_id');
         $quantity = $request->input('quantity');
         $product->parents()->attach($user_id, ['quantity' => $quantity]);

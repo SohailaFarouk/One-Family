@@ -10,8 +10,14 @@ class Parents extends Model
     use HasFactory;
     protected $table = 'parents';
     public $timestamps = false;
+    
+    protected $primaryKey = 'user_id';
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'event_id',
+       'subscription_id',
+       'voucher_id',
+       'subscription_date '
     ];
 
 
@@ -34,7 +40,7 @@ class Parents extends Model
     }
     public function subscription()
     {
-        return $this->belongsTo(Subscription::class);
+        return $this->belongsTo(Subscription::class, 'subscription_id');
     }
     public function voucher()
     {

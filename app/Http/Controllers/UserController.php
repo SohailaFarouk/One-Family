@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller

@@ -32,9 +32,5 @@ class Session extends Model
         return $this->belongsTo(Parents::class , 'user_id' );
     }
 
-    public function getAvailabilityAttribute()
-    {
-        return $this->sessions()->count();
-    }
 
 }
