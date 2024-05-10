@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer('order_number');
             $table->text('order_details');
             $table->double('order_amount');
+            $table->unsignedBigInteger('cart_id')->nullable()->default(null);
+            $table->foreign('cart_id')->references('cart_id')->on('carts')->onDelete('cascade');
         });
     }
 

@@ -19,9 +19,10 @@ class Session extends Model
         'session_time',
         'session_date'
     ];
+
     public function cart()
     {
-        return $this->belongsTo(Cart::class);
+        return $this->belongsTo(Cart::class, 'cart_id');
     }
     public function appointment()
     {

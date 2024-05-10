@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Session;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
@@ -80,7 +81,25 @@ class SessionController extends Controller
         ->where('session_id', $request->session_id)
         ->update(['user_id' => $request->user_id]);
 
-    return response()->json(['message' => 'Session reserved successfully.'], 201);
+            // Check if the user already has a cart associated in the sessions table
+    $existingCart = Session::where('user_id', $request->user_id)
+    ->whereNotNull('cart_id')
+    ->first();
+
+if ($existingCart) {
+    return response()->json(['message' => 'Session is already added to cart'], 200);
+}
+$session = Session::find($request->session_id);
+    $totalAmount = $session->session_fees;
+// Create a new cart and associate it with the user by updating the sessions table
+$cart = new Cart();
+$cart->total_amount += $totalAmount; // Set initial total amount
+$cart->save();
+
+// Update the sessions table with the new cart_id
+Session::where('session_id', $request->session_id)
+    ->update(['cart_id' => $cart->cart_id]);
+return response()->json(['message' => 'Session reserved and added to cart successfully'], 200);
 }
 
     

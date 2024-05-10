@@ -22,7 +22,7 @@ class Event extends Model
 
     public function admin()
     {
-        return $this->hasMany(Admin::class);
+        return $this->hasMany(Admin::class , 'event_id');
     }
 
     public function parent()
@@ -31,6 +31,6 @@ class Event extends Model
     }
     public function cart()
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(Cart::class , 'event_id');
     }
 }

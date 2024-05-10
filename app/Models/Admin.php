@@ -9,6 +9,7 @@ class Admin extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    public $primaryKey = 'user_id';
 
     public function product()
     {
@@ -17,7 +18,7 @@ class Admin extends Model
 
     public function event()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class , 'event_id');
     }
 
     public function payments()

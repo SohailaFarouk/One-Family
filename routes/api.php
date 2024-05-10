@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProductController;
@@ -68,7 +69,7 @@ Route::group(['prefix' => 'appointments'], function () {
 Route::group(['prefix' => 'sessions'], function () {
     Route::get('/', [SessionController::class, 'index']); // Get all session
     Route::post('/store', [SessionController::class, 'store']); // store a new session
-    Route::post('/reserve', [SessionController::class, 'reserve']); //
+    Route::post('/reserve', [SessionController::class, 'reserve']); // parent reserve and add session to cart
 });
 Route::post('/subscriptionplans',[SubscriptionController::class, 'subscriptionCard']);
 

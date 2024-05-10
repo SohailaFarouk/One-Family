@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Parents;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class SubscriptionController extends Controller
@@ -56,23 +57,28 @@ class SubscriptionController extends Controller
     
         $parent = Parents::where('user_id', $request->input('user_id'))->first();
     
-        if ($parent && $parent->subscription_id) {
-            return response()->json(['error' => 'You are already subscribed.'], 422);
+        if (!$parent) {
+            return response()->json(['error' => 'Parent not found.'], 404);
         }
     
-        if ($parent) {
+        // Check if the parent already has a subscription
+        if ($parent->subscription_id) {
+            // Update the existing subscription 
+            DB::table('parents')
+                ->where('user_id', $parent->user_id)
+                ->update([
+                    'subscription_id' => $subscription->subscription_id,
+                    'subscription_date' => $subscriptionDate,
+                ]);
+    
+            return response()->json(['message' => 'Subscription updated successfully']);
+        } else {
+            // Create a new subscription for the parent
             $parent->subscription_id = $request->input('subscription_id');
             $parent->subscription_date = $subscriptionDate;
             $parent->save();
-        } else {
-            Parents::create([
-                'user_id' => $request->input('user_id'),
-                'subscription_id' => $request->input('subscription_id'),
-                'subscription_date' => $subscriptionDate,
-            ]);
+    
+            return response()->json(['message' => 'You subscribed successfully']);
         }
-    
-        return response()->json(['message' => 'You subscribed successfully']);
     }
-    
 }

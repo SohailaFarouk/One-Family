@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id('cart_id');
             $table->unsignedBigInteger('event_id')->nullable()->default(null);
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
-            $table->unsignedBigInteger('order_id')->nullable()->default(null);
-            $table->foreign('order_id')->references('order_id')->on('orders')->onDelete('cascade');
             $table->double('total_amount');
             
         });
