@@ -20,6 +20,10 @@ class Parents extends Model
        'subscription_date '
     ];
 
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class , 'user_id');
+    }
 
     public function products()
     {

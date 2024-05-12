@@ -11,6 +11,7 @@ class Cart extends Model
     public $timestamps = false;
     protected $primaryKey = 'cart_id';
     protected $fillable = [
+        'user_id',
         'order_id',
         'event_id',
         'total_amount'
@@ -23,7 +24,7 @@ class Cart extends Model
 
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class , 'cart_id');
     }
 
     public function event()
@@ -33,5 +34,9 @@ class Cart extends Model
     public function product()
     {
         return $this->belongsToMany(Product::class , 'product_cart' , 'cart_id' , 'product_id');
+    }
+    public function parent()
+    {
+        return $this->hasOne(Parents::class , 'user_id');
     }
 }

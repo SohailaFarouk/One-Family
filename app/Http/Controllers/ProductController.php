@@ -121,42 +121,6 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully']);
     }
     /* -------------------------------------------------------------------------- */
-    public function shop(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:parents,user_id',
-            'product_id' => 'required|exists:products,product_id',
-            'quantity' => 'required|integer|min:1'
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
-        }
-    
-        $product = Product::find($request->input('product_id'));
-    
-        if (!$product || $product->quantity < $request->input('quantity')) {
-            return response()->json(['error' => 'Product not available in the requested quantity'], 404);
-        }
-    
-        $user_id = $request->input('user_id');
-        $quantity = $request->input('quantity');
-        $product->parents()->attach($user_id, ['quantity' => $quantity]);
-        $product->quantity -= $quantity;
-        $product->save();
-    
-        // Calculate total amount
-        $totalAmount = $product->product_price * $quantity;
-    
-        // Create or get the cart
-        $cart = new Cart(); 
-        $cart->total_amount = $totalAmount; // Set total amount
-        $cart->save();
-    
-        // Attach product to cart
-        $product->cart()->attach($cart->cart_id);
-    
-        return response()->json(['message' => 'Product reserved and added to cart successfully']);
-    }
     
     
 }
