@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function index(){
+        $users = User::get();
+        return response()->json(['users' => $users]);
+    }
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,7 +33,6 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
-
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,

@@ -43,7 +43,6 @@ class OrderController extends Controller
             ->select('products.*', 'parent_product.quantity')
             ->get();
         
-    
         // Retrieve sessions associated with the cart
         $sessions = Session::where('cart_id', $cart->cart_id)->get();
     
@@ -83,10 +82,6 @@ class OrderController extends Controller
         ];
     
         return response()->json($response, 200);
-    }
-    
-
-
-    
+    }    
     
 }

@@ -13,7 +13,7 @@ class AppointmentController extends Controller
         $appointments = Appointment::get();
         return response()->json(['appointments' => $appointments]);
     }
-    
+    /* -------------------------------------------------------------------------- */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -34,4 +34,33 @@ class AppointmentController extends Controller
 
         return response()->json(['message' => 'Appointment created successfully', 'appointment_data' => $appointment]);
     }
+    /* -------------------------------------------------------------------------- */
+    public function destroy(Request $request)
+{
+  // Validate appointment ID
+  $validator = Validator::make($request->all(), [
+    'appointment_id' => 'required|integer|exists:doctor_appointment,appointment_id',
+  ]);
+
+  if ($validator->fails()) {
+    return response()->json(['error' => $validator->errors()], 422);
+  }
+    $appointment_id = $request->input('appointment_id');
+  // Find the appointment
+  $appointment = Appointment::find($appointment_id);
+
+  // If appointment not found, return error
+  if (!$appointment) {
+    return response()->json(['error' => 'Appointment not found'], 404);
+  }
+
+  // Detach doctor relationship (optional, depending on your needs)
+  $appointment->doctors()->detach();
+
+  // Delete the appointment
+  $appointment->delete();
+
+  return response()->json(['message' => 'Appointment deleted successfully']);
+}
+
 }
