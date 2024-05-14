@@ -64,10 +64,7 @@ class AdminController extends Controller
     
         return response()->json(['message' => 'User data updated successfully' , 'updates' => $updates]);
     }
-    
-    
-    
-    
+
 /* -------------------------------------------------------------------------- */
 public function deleteParent(Request $request)
 {

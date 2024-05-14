@@ -52,6 +52,6 @@ class Parents extends Model
     }
     public function feedback()
     {
-        return $this->hasMany(Feedback::class);
+        return $this->belongsToMany(Feedback::class , 'parent_feedback' , 'user_id' , 'feedback_id');
     }
 }

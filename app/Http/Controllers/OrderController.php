@@ -29,7 +29,9 @@ class OrderController extends Controller
         $existingOrder = Order::where('cart_id', $cart->cart_id)->first();
         if ($existingOrder) {
             $orderDetails = json_decode($existingOrder->order_details, true);
-            return response()->json(['error' => 'Order is already confirmed', 'orderDetails' => $orderDetails], 404);
+            return response()->json(['error' => 'Order is already confirmed', 'orderDetails' => $orderDetails ,             
+            'The total'=>$existingOrder->order_amount,
+        ], 404);
         }
     
         // Retrieve products associated with the cart
@@ -78,7 +80,8 @@ class OrderController extends Controller
     
         $response = [
             'message' => 'Order confirmed successfully',
-            'order_details' => $orderDetails, 
+            'order details' => $orderDetails, 
+            'The total'=>$order->order_amount,
         ];
     
         return response()->json($response, 200);

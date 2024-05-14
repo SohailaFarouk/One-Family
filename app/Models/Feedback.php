@@ -10,14 +10,22 @@ class Feedback extends Model
     use HasFactory;
     public $timestamps = false;
     public $primaryKey = 'feedback_id';
+    protected $table = 'feedbacks';
+
+
+    protected $fillable = [
+        'feedback_content',
+        'order_id',
+        
+    ];
 
 
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class , 'order_id');
     }
     public function parent()
     {
-        return $this->hasMany(Parents::class);
+        return $this->belongsToMany(Parents::class , 'parent_feedback' , 'feedback_id' , 'user_id');
     }
 }

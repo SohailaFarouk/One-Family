@@ -11,6 +11,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SubscriptionController;
 
@@ -69,10 +70,11 @@ Route::group(['prefix' => 'vouchers'], function () {
     Route::delete('/delete', [VoucherController::class, 'destroy']); // Delete an voucher
 });
 
-// Route::group(['prefix' => 'feedbacks'], function () {
-//     Route::get('/', [FeedbackController::class, 'index']); // Get all feedbacks
-//     Route::post('/make', [FeedbackController::class, 'make']); // make a new feedback
-// });
+Route::group(['prefix' => 'feedbacks'], function () {
+    Route::get('/', [FeedbackController::class, 'index']); // Get all feedbacks
+    Route::post('/makeFeedback', [FeedbackController::class, 'makeFeedback']); // make a new feedback
+    Route::post('/showFeedback', [FeedbackController::class, 'show']); // show a specific feedback
+});
 
 
 Route::group(['prefix' => 'appointments'], function () {
