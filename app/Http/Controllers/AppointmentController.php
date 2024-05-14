@@ -54,7 +54,7 @@ class AppointmentController extends Controller
     return response()->json(['error' => 'Appointment not found'], 404);
   }
 
-  // Detach doctor relationship (optional, depending on your needs)
+  // Detach doctor relationship 
   $appointment->doctors()->detach();
 
   // Delete the appointment

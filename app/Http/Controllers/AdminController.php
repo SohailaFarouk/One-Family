@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Parents;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -110,7 +109,7 @@ public function deleteParent(Request $request)
     ->where('user_id', $userId)
     ->delete();
 
-  // Delete user (consider soft deletes if applicable)
+  // Delete user 
   DB::table('users')
     ->where('user_id', $userId)
     ->delete();

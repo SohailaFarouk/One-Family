@@ -48,9 +48,6 @@ Route::group(['prefix' => 'products'], function () {
     Route::get('/show', [ProductController::class, 'show']);
     Route::put('/update', [ProductController::class, 'update']); 
     Route::delete('/delete', [ProductController::class, 'destroy']); 
-    Route::post('/cart', [CartController::class, 'productToCart']); //parent can reserve a product
-    Route::put('/editCart', [CartController::class, 'editCart']);
-    Route::delete('/deleteProduct', [CartController::class, 'deleteProduct']);
 
 });
 Route::group(['prefix' => 'events'], function () {
@@ -59,8 +56,7 @@ Route::group(['prefix' => 'events'], function () {
     Route::get('/show', [EventController::class, 'show']); // Show details of an event
     Route::put('/update', [EventController::class, 'update']); // Update an event
     Route::delete('/delete', [EventController::class, 'destroy']); // Delete an event
-    Route::post('/cart', [CartController::class, 'eventToCart']); // parent Reserve an event
-    Route::delete('/deleteEvent',[CartController::class, 'deleteEvent']);
+
 });
 Route::group(['prefix' => 'vouchers'], function () {
     Route::get('/', [VoucherController::class, 'index']); // Get all vouchers
@@ -75,7 +71,16 @@ Route::group(['prefix' => 'feedbacks'], function () {
     Route::post('/makeFeedback', [FeedbackController::class, 'makeFeedback']); // make a new feedback
     Route::post('/showFeedback', [FeedbackController::class, 'show']); // show a specific feedback
 });
-
+Route::group(['prefix'=>'cart'], function(){
+    Route::post('/', [CartController::class, 'index']); // Get all items in cart
+    Route::post('/productToCart', [CartController::class, 'productToCart']); //parent can reserve a product
+    Route::put('/editCart', [CartController::class, 'editCart']); //parent can edit product quantity in cart
+    Route::delete('/deleteProduct', [CartController::class, 'deleteProduct']);
+    Route::post('/sessionToCart', [CartController::class, 'sessionToCart']); // parent reserve and add session to cart
+    Route::delete('/deleteSession',[CartController::class, 'deleteSession']);
+    Route::post('/eventToCart', [CartController::class, 'eventToCart']); // parent Reserve an event
+    Route::delete('/deleteEvent',[CartController::class, 'deleteEvent']);
+});
 
 Route::group(['prefix' => 'appointments'], function () {
     Route::get('/', [AppointmentController::class, 'index']); // Get all appointments
@@ -85,15 +90,12 @@ Route::group(['prefix' => 'appointments'], function () {
 Route::group(['prefix' => 'sessions'], function () {
     Route::get('/', [SessionController::class, 'index']); // Get all session
     Route::post('/store', [SessionController::class, 'store']); // store a new session
-    Route::post('/cart', [CartController::class, 'sessionToCart']); // parent reserve and add session to cart
-    Route::delete('/deleteSession',[CartController::class, 'deleteSession']);
-
 });
 Route::post('/subscriptionplans',[SubscriptionController::class, 'subscriptionCard']);
 
 Route::post('/subscribe',[SubscriptionController::class, 'subscribe']);
 
-Route::post('/order',[OrderController::class, 'confirmOrder']);
+Route::post('/confirmOrder',[OrderController::class, 'confirmOrder']);
 
 Route::get('/AllDoctors',[DoctorController::class,'index']);
 Route::post('/reservedSessions',[DoctorController::class,'showReservedParents']);

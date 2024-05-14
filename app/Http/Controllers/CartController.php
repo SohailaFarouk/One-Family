@@ -18,17 +18,60 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:parents,user_id',
         ]);
-        $user_id = $request->input('user_id');
+        
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
     
+        $user_id = $request->input('user_id');
+        
         // Check if the parent has a cart
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
-    
+        
         if (!$cart) {
             return response()->json(['error' => 'Cart not found'], 404);
         }
     
-        return response()->json(['cart' => $cart]);
+        // Get the session for the user
+        $session = DB::table('sessions')->where('user_id', $user_id)->first();
+    
+        // Get the parent's product and quantity
+        $parentProduct = DB::table('parent_product')->where('user_id', $user_id)->first();
+    
+        if (!$parentProduct) {
+            return response()->json(['error' => 'Parent product not found'], 404);
+        }
+    
+        // Get the product details for the parent's product
+        $product = DB::table('products')->where('product_id', $parentProduct->product_id)->first();
+    
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    
+        // Get the parent's event ID
+        $parentEventId = DB::table('parents')->where('user_id', $user_id)->pluck('event_id')->first();
+    
+        // Get the event details
+        $event = DB::table('events')->where('event_id', $parentEventId)->first();
+    
+        return response()->json([
+            'cart' => $cart,
+            'session' => $session,
+            'product' => [
+                'product_id' => $product->product_id,
+                'product_name' => $product->product_name,
+                'product_description' => $product->product_description,
+                'product_specification' => $product->product_specification,
+                'product_price' => $product->product_price,
+                'product_type' => $product->product_type,
+                'product_image' => $product->product_image,
+                'quantity' => $parentProduct->quantity // Use the input quantity instead
+            ],
+            'event' => $event,
+        ]);
     }
+    
     /* -------------------------------------------------------------------------- */
     /* --------------------------- add product to cart -------------------------- */
     public function productToCart(Request $request)
@@ -359,17 +402,17 @@ class CartController extends Controller
         ->where('product_id', $product_id)
         ->delete();
     
-      // Retrieve the quantity from the cart item (handle potential null)
+      // Retrieve the quantity from the cart item 
       $quantityToUpdate = $parentProduct->quantity ?? 0;
     
-      // Increase product quantity in the main products table (adds back to stock)
+      // Increase product quantity in the main products table 
       Product::where('product_id', $product_id)
         ->increment('quantity', $quantityToUpdate);
     
       // Only update cart total amount if it's not null already
       if (!is_null($cart->total_amount)) {
         $newTotalAmount = $cart->total_amount - $productPrice;
-        if ($newTotalAmount >= 0) { // Avoid negative total amount
+        if ($newTotalAmount >= 0) { 
           $cart->update(['total_amount' => $newTotalAmount]);
         }
       }
@@ -399,7 +442,7 @@ class CartController extends Controller
         // Detach the event from the cart using DB facade
         DB::table('carts')->where('cart_id', $cart->cart_id)->where('event_id', $event_id)->update(['event_id' => null]);
     
-        // Optionally delete related records from the parents table
+        // delete related records from the parents table
         DB::table('parents')->where('event_id', $event_id)->update(['event_id' => null]);
     
         // Update the cart's total amount
