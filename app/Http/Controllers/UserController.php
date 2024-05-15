@@ -64,7 +64,7 @@ class UserController extends Controller
             }
     
             $childrenData = [];
-            for ($i = 0; $i <= $childrenCount; $i++) {
+            for ($i = 0; $i < $childrenCount; $i++) {
                 $childrenData[] = [
                     'user_id' => $user->id,
                     'name' => $request->children_names[$i],

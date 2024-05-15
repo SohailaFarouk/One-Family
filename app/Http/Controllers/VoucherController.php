@@ -32,7 +32,7 @@ class VoucherController extends Controller
         $voucher = new Voucher();
         $voucher->voucher_code = $request->input('voucher_code');
         $voucher->voucher_percentage = $request->input('voucher_percentage');
-
+        
         $voucher->save();
         return response()->json(['message' => 'voucher created successfully', 'voucher' => $voucher], 201);
     }
