@@ -25,14 +25,20 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'date_of_birth' => 'required',
             'address' => 'required',
-            'nat_id' => 'required|numeric|',
+            'nat_id' => 'required|numeric',
             'gender' => 'required',
-            'marital_status' => 'required'
+            'marital_status' => 'required',
+            'phone_number' => 'required|digits:11',
+            'number_of_children' => 'required_if:marital_status,married|numeric|min:1',
+            'children_names.*' => 'required_if:marital_status,married', // Require at least one name
+            'children_date_of_birth.*' => 'required_if:marital_status,married|date_format:Y-m-d',
+            'children_genders.*' => 'required_if:marital_status,married|in:male,female',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
+    
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -42,17 +48,38 @@ class UserController extends Controller
             'address' => $request->address,
             'nat_id' => $request->nat_id,
             'gender' => $request->gender,
-            'marital_status' => $request->marital_status
+            'marital_status' => $request->marital_status,
+            'phone_number' => $request->phone_number,
         ]);
-
+    
         Parents::create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
-
-
-        return response()->json(['message' => 'User registered successfully', 'user' => $user]);
+    
+        if ($request->marital_status === 'married' ) {
+            $childrenCount = is_array($request->number_of_children) ? count($request->number_of_children) : (int) $request->number_of_children;
+        
+            if ($childrenCount !== count($request->children_names)) {
+                return response()->json(['error' => 'Number of children names does not match declared number'], 422);
+            }
+    
+            $childrenData = [];
+            for ($i = 0; $i <= $childrenCount; $i++) {
+                $childrenData[] = [
+                    'user_id' => $user->id,
+                    'name' => $request->children_names[$i],
+                    'date_of_birth' => $request->children_date_of_birth[$i],
+                    'gender' => $request->children_genders[$i],
+                    'number_of_children' => $request->number_of_children, 
+                ];
+            }
+    
+            DB::table('childrens')->insert($childrenData);
+        }
+    
+        return response()->json(['message' => 'User registered successfully','user'=> $user , 'children'=> $childrenData], 200);
     }
-
+    
 
     public function login(Request $request)
     {

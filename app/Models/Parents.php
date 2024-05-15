@@ -40,7 +40,7 @@ class Parents extends Model
     }
     public function children()
     {
-        return $this->hasMany(Children::class);
+        return $this->hasMany(Children::class, 'user_id');
     }
     public function subscription()
     {
@@ -53,5 +53,9 @@ class Parents extends Model
     public function feedback()
     {
         return $this->belongsToMany(Feedback::class , 'parent_feedback' , 'user_id' , 'feedback_id');
+    }
+    public function payment()
+    {
+        return $this->belongsToMany(Payment::class, 'parent_payment', 'payment_id', 'user_id');
     }
 }

@@ -14,26 +14,73 @@ class DoctorController extends Controller
     }
 
 
-    public function showReservedParents(Request $request){
+    public function showReservedParents(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:doctors,user_id',
         ]);
+    
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
     
-        $doctor = DB::table('doctor_appointment')->where('user_id', $request->user_id)->get('appointment_id');
-        if ($doctor->isEmpty()){
+        $doctorAppointments = DB::table('doctor_appointment')
+            ->where('user_id', $request->user_id)
+            ->pluck('appointment_id');
+    
+        if ($doctorAppointments->isEmpty()) {
             return response()->json(['error' => 'No appointments made'], 404);
         }
     
         $parents = DB::table('sessions')
             ->join('users', 'sessions.user_id', '=', 'users.user_id')
-            ->whereIn('sessions.appointment_id', $doctor->pluck('appointment_id'))
-            ->select('users.first_name', 'users.last_name', 'users.marital_status', 'users.date_of_birth', 'sessions.session_type', 'sessions.session_time', 'sessions.session_date')
+            ->whereIn('sessions.appointment_id', $doctorAppointments)
+            ->select(
+                'users.user_id',
+                'users.first_name',
+                'users.last_name',
+                'users.marital_status',
+                'users.date_of_birth',
+                'sessions.session_type',
+                'sessions.session_time',
+                'sessions.session_date'
+            )
             ->get();
     
-        return response()->json(['Patient list' => $parents]);
+        $userIDs = $parents->pluck('user_id');
+    
+        $children = DB::table('childrens')
+            ->whereIn('user_id', $userIDs)
+            ->get();
+    
+        $response = [];
+        foreach ($parents as $parent) {
+            $responseItem = [
+                'first_name' => $parent->first_name,
+                'last_name' => $parent->last_name,
+                'marital_status' => $parent->marital_status,
+                'date_of_birth' => $parent->date_of_birth,
+                'session_type' => $parent->session_type,
+                'session_time' => $parent->session_time,
+                'session_date' => $parent->session_date,
+                'children' => [],
+            ];
+    
+            foreach ($children as $child) {
+                if ($child->user_id === $parent->user_id) {
+                    $responseItem['children'][] = [
+                        'name' => $child->name,
+                        'date_of_birth' => $child->date_of_birth,
+                    ];
+                }
+            }
+    
+            $response[] = $responseItem;
+        }
+    
+        return response()->json(['Patient list' => $response]);
     }
+    
+    
     
 }

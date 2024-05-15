@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('childrens', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable()->default(null);
             $table->foreign('user_id')->references('user_id')->on('parents')->onDelete('cascade');
             $table->string('name');
-            $table->integer('number_of_children');
+            $table->integer('number_of_children')->nullable()->default(null);
             $table->enum('gender', ['male', 'female']);
-            $table->date('date of birth');
+            $table->date('date_of_birth');
         });
     }
 

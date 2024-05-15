@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cards', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_id') -> nullable()->default(null);
+        Schema::create('doctor_payment', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('user_id')->on('doctors')->onDelete('cascade');
+            $table->unsignedBigInteger('payment_id')->nullable()->default(null);
             $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
-            $table->string('cardholder_name');
-            $table->string('card_number');
-            $table->string('cvv', 3);
-            $table->unsignedTinyInteger('month');
-            $table->unsignedSmallInteger('year');
-
-
+            
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cards');
+        Schema::dropIfExists('doctor_payment');
     }
 };

@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mobilewallets', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_id');
+        Schema::create('parent_payment', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('user_id')->on('parents')->onDelete('cascade');
+            $table->unsignedBigInteger('payment_id')->nullable()->default(null);
             $table->foreign('payment_id')->references('payment_id')->on('payments')->onDelete('cascade');
-            $table->string('mobile_number');
+            
         });
     }
 
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mobilewallets');
+        Schema::dropIfExists('parent_payment');
     }
 };

@@ -25,11 +25,15 @@ class Payment extends Model
     }
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->belongsToMany(Doctor::class , 'doctor_payment', 'payment_id' , 'user_id');
+    }
+    public function parents()
+    {
+        return $this->belongsToMany(Parents::class , 'parent_payment', 'payment_id' , 'user_id');
     }
     public function admin()
     {
-        return $this->belongsToMany(Admin::class)->withPivot('sales_report_path');
+        return $this->belongsToMany(Admin::class , 'admin_payment', 'payment_id' , 'user_id');
     }
 
 }

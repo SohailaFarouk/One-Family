@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    public function updateParent(Request $request)
+  public function updateParent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,user_id', // Validate user ID existence
+            'user_id' => 'required|exists:users,user_id',
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email,' . $request->input('user_id'), // Unique validation considering user ID
@@ -21,6 +21,7 @@ class AdminController extends Controller
             'nat_id' => 'nullable|numeric',
             'gender' => 'nullable',
             'marital_status' => 'nullable',
+            'phone_number' => 'nullable|digits:11',
         ]);
     
         if ($validator->fails()) {
@@ -54,6 +55,9 @@ class AdminController extends Controller
         if ($request->filled('marital_status')) {
             $updates['marital_status'] = $request->input('marital_status');
         }
+        if ($request->filled('phone_number')) {
+            $updates['phone_number'] = $request->input('phone_number');
+        }
     
         if (!empty($updates)) {
             DB::table('users')
@@ -63,6 +67,7 @@ class AdminController extends Controller
     
         return response()->json(['message' => 'User data updated successfully' , 'updates' => $updates]);
     }
+  
 
 /* -------------------------------------------------------------------------- */
 public function deleteParent(Request $request)
@@ -106,6 +111,10 @@ public function deleteParent(Request $request)
     ->delete();
 
   DB::table('admin_product')
+    ->where('user_id', $userId)
+    ->delete();
+    
+  DB::table('childrens')
     ->where('user_id', $userId)
     ->delete();
 

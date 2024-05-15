@@ -18,6 +18,9 @@ return new class extends Migration
             $table->double('order_amount');
             $table->unsignedBigInteger('cart_id')->nullable()->default(null);
             $table->foreign('cart_id')->references('cart_id')->on('carts')->onDelete('cascade');
+            $table->unsignedBigInteger('voucher_id')->nullable()->default(null);
+            $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
+            
         });
     }
 

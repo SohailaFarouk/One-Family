@@ -11,11 +11,11 @@ class Doctor extends Model
     public $timestamps = false;
     public function payment()
     {
-        return $this->belongsToMany(Payment::class, 'doctor_payment', 'doctor_id', 'user_id');
+        return $this->belongsToMany(Payment::class, 'doctor_payment', 'user_id', 'user_id');
     }
 public function appointments()
     {
-        return $this->belongsToMany(Appointment::class, 'doctor_appointment', 'doctor_id', 'user_id');
+        return $this->belongsToMany(Appointment::class, 'doctor_appointment', 'user_id', 'appointment_id');
     }
 
 }
