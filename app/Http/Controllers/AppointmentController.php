@@ -16,9 +16,10 @@ class AppointmentController extends Controller
     /* -------------------------------------------------------------------------- */
     public function store(Request $request)
     {
+      $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
             'appointment_date' => 'required|date',
-            'user_id' => 'required|exists:doctors,user_id',
         ]);
 
         if ($validator->fails()) {
@@ -29,7 +30,7 @@ class AppointmentController extends Controller
         $appointment->appointment_date = $request->input('appointment_date');
         $appointment->save();
 
-        $doctorId = $request->input('user_id');
+        $doctorId = $user_id;
         $appointment->doctors()->attach($doctorId);
 
         return response()->json(['message' => 'Appointment created successfully', 'appointment_data' => $appointment]);

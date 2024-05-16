@@ -82,6 +82,7 @@ class OrderController extends Controller
             'message' => 'Order confirmed successfully',
             'order details' => $orderDetails, 
             'The total'=>$order->order_amount,
+            'order id' => $order->order_id,
         ];
     
         return response()->json($response, 200);

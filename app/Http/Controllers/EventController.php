@@ -21,8 +21,9 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:admins,user_id',
             'event_name' => 'required|string|max:255',
             'event_description' => 'required|string',
             'event_price' => 'required|numeric|min:0',
@@ -47,9 +48,9 @@ class EventController extends Controller
         $event->save();
 
         $admin = DB::table('admins')
-        ->where('user_id', $request->user_id);
+        ->where('user_id', $user_id);
         if ($admin) {
-            DB::table('admins')->where('user_id', $request->user_id)
+            DB::table('admins')->where('user_id', $user_id)
             ->update(['event_id' => $event->event_id]);        
         }
         
@@ -128,53 +129,5 @@ class EventController extends Controller
 
         return response()->json(['message' => 'event deleted successfully']);
     }
-    /* -------------------------------------------------------------------------- */
-    // public function reserve(Request $request ){
-    //         $validator = Validator::make($request->all(), [
-    //             'user_id' => 'required|exists:parents,user_id',
-    //             'event_id' => 'required|exists:events,event_id',
-    //         ]);
-        
-    //         if ($validator->fails()) {
-    //             return response()->json(['error' => $validator->errors()->first()], 422);
-    //         }
-        
-    //         $event = Event::find($request->input('event_id'));
 
-    //         if (!$event || $event->event_status === 'Cancelled') {
-    //             return response()->json(['error' => 'The event is cancelled'], 404);
-    //         } 
-    //         DB::table('parents')
-    //         ->where('user_id', $request->user_id)
-    //         ->update(['event_id' => $request->event_id]); 
-            
-    //         DB::table('carts')
-    //         ->where('cart_id', $request->cart_id)
-    //         ->update(['event_id' => $request->event_id]);
-    
-    //             // Check if the user already has a cart associated in the events table
-    //     $existingCart = Cart::where('event_id', $request->event_id)
-    //     ->whereNotNull('cart_id')
-    //     ->first();
-    
-    // if ($existingCart) {
-    //     return response()->json(['message' => 'Event is already added to cart'], 200);
-    // }
-    
-    // $event = Event::find($request->event_id);
-    //     $totalAmount = $event->event_price;
-
-    //     $cart = new Cart();
-    // $cart->total_amount += $totalAmount; // Set initial total amount
-    // $cart->save();
-    
-    // DB::table('carts')
-    //             ->where('cart_id', $cart->cart_id)
-    //             ->update([
-    //                 'event_id' => $event->event_id,
-    //             ]);
-
-    //         return response()->json(['message' => 'Event reserved and added to cart successfully']);
-        
-    // }
 }

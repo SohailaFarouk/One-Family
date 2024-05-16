@@ -16,16 +16,11 @@ class DoctorController extends Controller
 
     public function showReservedParents(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:doctors,user_id',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
-        }
+        $user_id = $request->header('user_id');
+
     
         $doctorAppointments = DB::table('doctor_appointment')
-            ->where('user_id', $request->user_id)
+            ->where('user_id', $user_id)
             ->pluck('appointment_id');
     
         if ($doctorAppointments->isEmpty()) {
