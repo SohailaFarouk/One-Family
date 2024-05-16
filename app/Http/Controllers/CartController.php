@@ -15,15 +15,8 @@ class CartController extends Controller
 
     public function index(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:parents,user_id',
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
-        }
+        $user_id = $request->header('user_id');
     
-        $user_id = $request->input('user_id');
         
         // Check if the parent has a cart
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
@@ -76,8 +69,9 @@ class CartController extends Controller
     /* --------------------------- add product to cart -------------------------- */
     public function productToCart(Request $request)
 {
+    $user_id = $request->header('user_id');
+
     $validator = Validator::make($request->all(), [
-        'user_id' => 'required|exists:parents,user_id',
         'product_id' => 'required|exists:products,product_id',
         'quantity' => 'required|integer|min:1'
     ]);
@@ -86,7 +80,6 @@ class CartController extends Controller
         return response()->json(['error' => $validator->errors()->first()], 422);
     }
 
-    $user_id = $request->input('user_id');
     $product_id = $request->input('product_id');
     $quantity = $request->input('quantity');
 
@@ -179,8 +172,9 @@ class CartController extends Controller
     /* --------------------------- add session to cart -------------------------- */
     public function sessionToCart(Request $request)
     {
+        $user_id = $request->header('user_id');
+
       $validator = Validator::make($request->all(), [
-        'user_id' => 'required|exists:parents,user_id',
         'session_id' => 'required|exists:sessions,session_id',
       ]);
     
@@ -189,7 +183,6 @@ class CartController extends Controller
       }
     
       $session = Session::find($request->session_id);
-      $user_id = $request->input('user_id');
     
       // Check if session already belongs to the user
       if ($session->user_id === $user_id) {
@@ -231,8 +224,9 @@ class CartController extends Controller
     /* --------------------------- add event to cart -------------------------- */
     public function eventToCart(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:parents,user_id',
             'event_id' => 'required|exists:events,event_id',
         ]);
 
@@ -240,8 +234,6 @@ class CartController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
         $event = Event::find($request->event_id);
-
-        $user_id = $request->input('user_id');
 
         if ($event->event_status === 'Cancelled') {
             return response()->json(['message' => 'Event is cancelled'], 400);
@@ -277,8 +269,9 @@ class CartController extends Controller
     /* --------------------------- edit product from cart -------------------------- */
     public function editCart(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:parents,user_id',
             'product_id' => 'required|exists:products,product_id',
             'quantity' => 'required|integer|min:1'
         ]);
@@ -287,7 +280,6 @@ class CartController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
     
-        $user_id = $request->input('user_id');
         $product_id = $request->input('product_id');
         $quantity = $request->input('quantity');
     
@@ -349,9 +341,8 @@ class CartController extends Controller
     /* ------------------------ delete product from cart ------------------------ */
     public function deleteProduct(Request $request)
     {
-      // Validate user input
+        $user_id = $request->header('user_id');
       $validator = Validator::make($request->all(), [
-        'user_id' => 'required|exists:carts,user_id',
         'product_id' => 'required|exists:product_cart,product_id',
       ]);
     
@@ -360,7 +351,6 @@ class CartController extends Controller
       }
     
       // Extract user and product IDs
-      $user_id = $request->input('user_id');
       $product_id = $request->input('product_id');
     
       // Find the user's cart
@@ -422,8 +412,9 @@ class CartController extends Controller
     /* ------------------------- delete event from cart ------------------------- */
     public function deleteEvent(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:carts,user_id',
             'event_id' => 'required|exists:carts,event_id',
         ]);
     
@@ -431,7 +422,6 @@ class CartController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
     
-        $user_id = $request->input('user_id');
         $event_id = $request->input('event_id');
     
         $cart = Cart::where('user_id', $user_id)->first();
@@ -456,8 +446,9 @@ class CartController extends Controller
     /* ------------------------ delete session from cart ------------------------ */
     public function deleteSession(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:parents,user_id',
             'session_id' => 'required|exists:sessions,session_id',
         ]);
     
@@ -465,7 +456,6 @@ class CartController extends Controller
             return response()->json(['error' => $validator->errors()->first()], 422);
         }
     
-        $user_id = $request->input('user_id');
         $session_id = $request->input('session_id');
     
         // Get the session associated with the user

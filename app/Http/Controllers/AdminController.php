@@ -11,6 +11,7 @@ class AdminController extends Controller
 {
   public function updateParent(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,user_id',
             'first_name' => 'nullable|string|max:255',

@@ -43,9 +43,10 @@ class SubscriptionController extends Controller
     /* -------------------------------------------------------------------------- */
     public function subscribe(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
             'subscription_id' => 'required|exists:subscriptions,subscription_id',
-            'user_id' => 'required|exists:parents,user_id',
         ]);
     
         if ($validator->fails()) {
@@ -55,7 +56,7 @@ class SubscriptionController extends Controller
         $subscription = Subscription::find($request->input('subscription_id'));
         $subscriptionDate = $subscription->subscription_plan === 'free' ? null : now();
     
-        $parent = Parents::where('user_id', $request->input('user_id'))->first();
+        $parent = Parents::where('user_id', $user_id)->first();
     
         if (!$parent) {
             return response()->json(['error' => 'Parent not found.'], 404);

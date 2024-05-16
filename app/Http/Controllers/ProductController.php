@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +17,8 @@ class ProductController extends Controller
     /* -------------------------------------------------------------------------- */
     public function store(Request $request)
     {
+        $user_id = $request->header('user_id');
+
         $validator = Validator::make($request->all(), [
             'product_name' => 'required|string|max:255',
             'product_description' => 'required|string',
@@ -26,7 +27,6 @@ class ProductController extends Controller
             'quantity' => 'nullable|',
             'product_type' => 'required|string|in:Books,Coloring Books,Medications,Prosthetic Tools',
             'product_image' => 'nullable|image|max:2048',
-            'user_id' => 'required|exists:admins,user_id',
 
         ]);
         if ($validator->fails()) {
@@ -46,8 +46,7 @@ class ProductController extends Controller
         }
         $product->save();
 
-        $admin_id = $request->input('user_id');
-        $product->admin()->attach($admin_id);
+        $product->admin()->attach($user_id);
 
         return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
     }
@@ -104,7 +103,6 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product updated successfully', 'product' => $product]);
     }
-
     /* -------------------------------------------------------------------------- */
     public function destroy(Request $request)
     {

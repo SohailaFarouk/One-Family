@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\VoucherController;
@@ -99,5 +100,9 @@ Route::post('/confirmOrder',[OrderController::class, 'confirmOrder']);
 
 Route::get('/AllDoctors',[DoctorController::class,'index']);
 Route::post('/reservedSessions',[DoctorController::class,'showReservedParents']);
+
+Route::get('/checkout',[StripeController::class,'checkout']);
+
+Route::post('/confirmPayment',[StripeController::class,'confirmPayment']);
 
 

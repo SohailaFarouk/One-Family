@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date_of_birth');
             $table->text('address');
             $table->string('nat_id', 14)->unique();
+            $table->string('phone_number', 11);
             $table->enum('gender', ['male', 'female']);
             $table->enum('marital_status', ['married', 'single'])->default('single');
             $table->enum('role',['parent','admin','doctor'])->default('parent');
