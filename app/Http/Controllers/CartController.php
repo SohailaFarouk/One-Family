@@ -245,7 +245,7 @@ class CartController extends Controller
         $cart = Cart::where('user_id', $user_id)->first();
         $event_cart = Cart::where('event_id', $request->event_id)->first();
         DB::table('parents')
-            ->where('user_id', $request->user_id)
+            ->where('user_id', $user_id)
             ->update(['event_id' => $request->event_id]);
         if ($cart && $event_cart) {
             return response()->json(['message' => 'Event Already Reserved', 'event' => $event], 400);
@@ -254,7 +254,7 @@ class CartController extends Controller
         if ($cart) {
             $cart->total_amount += $event->event_price;
             $cart->save();
-            Cart::where('user_id', $request->user_id)
+            Cart::where('user_id',$user_id)
                 ->update(['event_id' => $event->event_id]);
             return response()->json(['message' => 'Event reserved and Cart updated successfully', 'event' => $event], 200);
         }

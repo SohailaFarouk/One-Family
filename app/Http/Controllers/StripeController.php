@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Stripe\Stripe;
 use App\Models\Order;
-use App\Models\Payment;
 use Illuminate\Http\Request;
-use Stripe\Checkout\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 
 class StripeController extends Controller
 {
@@ -16,8 +16,16 @@ class StripeController extends Controller
         return response()->json(['order' => $order]);
     }
     public function confirmPayment(Request $request){
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required|exists:orders,order_id',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }    
+
         $order_id = $request->input('order_id');
-        $order = Order::find($order_id);
+        $order = DB::table('orders')->where('order_id', $order_id)->first();
         Stripe::setApiKey(config('stripe.sk'));
     
         // Check if the order exists
