@@ -16,11 +16,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade'); 
             $table->unsignedBigInteger('event_id')->nullable()->default(null);
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
-            $table->unsignedBigInteger('subscription_id')->nullable()->default(null);
+            $table->unsignedBigInteger('subscription_id')->default(1);
             $table->foreign('subscription_id')->references('subscription_id')->on('subscriptions')->onDelete('cascade');
             $table->date('subscription_date')->nullable()->default(null);
-            $table->unsignedBigInteger('voucher_id')->nullable()->default(null);
-            $table->foreign('voucher_id')->references('voucher_id')->on('vouchers')->onDelete('cascade');
         });
     }
 

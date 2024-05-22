@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Session;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -19,7 +20,7 @@ class OrderController extends Controller
             'cart_id' => 'required|exists:carts,cart_id',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         // Find the cart
@@ -29,7 +30,7 @@ class OrderController extends Controller
         $existingOrder = Order::where('cart_id', $cart->cart_id)->first();
         if ($existingOrder) {
             $orderDetails = json_decode($existingOrder->order_details, true);
-            return response()->json(['error' => 'Order is already confirmed', 'orderDetails' => $orderDetails ,             
+            return response()->json(['success'=> false ,'error' => 'Order is already confirmed', 'orderDetails' => $orderDetails ,             
             'The total'=>$existingOrder->order_amount,
         ], 404);
         }
@@ -78,7 +79,7 @@ class OrderController extends Controller
         $order->cart_id = $cart->cart_id; 
         $order->save();
     
-        $response = [
+        $response = ['success' => true,
             'message' => 'Order confirmed successfully',
             'order details' => $orderDetails, 
             'The total'=>$order->order_amount,
@@ -86,6 +87,41 @@ class OrderController extends Controller
         ];
     
         return response()->json($response, 200);
-    }    
+    }   
+    
+    
+    public function applyVoucher(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'order_id' => 'required|exists:orders,order_id',
+        'voucher_code' => 'required|exists:vouchers,voucher_code',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
+    }
+
+    $order = Order::find($request->input('order_id'));
+    $voucher = Voucher::where('voucher_code', $request->input('voucher_code'))->first();
+
+    if ($order && $voucher) {
+        $order->voucher_id = $voucher->voucher_id;
+
+        $order->order_amount = $order->order_amount * (1 - $voucher->voucher_percentage);
+        $order->save();
+
+        $cart = Cart::find($order->cart_id);
+        
+        if ($cart) {
+            $user_id = $cart->user_id;
+            $voucher->parents()->attach($user_id);
+        }
+
+        return response()->json(['success' => true,'message' => 'Voucher applied successfully', 'order' => $order], 200);
+    }
+
+    return response()->json(['success'=> false ,'error' => 'Order or Voucher not found'], 404);
+}
+
     
 }

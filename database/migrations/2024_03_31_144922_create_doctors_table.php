@@ -17,6 +17,9 @@ return new class extends Migration
             $table->integer('experience_years');
             $table->enum('medical_profession',['Therapist','Psychiatrist','Physiatrist','Prosthetist']);
             $table->text('clinic_address');
+            $table->string('bank_account_number');
+            $table->string('card_number')->nullable()->default(null);
+
          });
     }
 

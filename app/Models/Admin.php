@@ -30,4 +30,8 @@ class Admin extends Model
     {
         return $this->belongsToMany(User::class);
     }
+    public function voucher()
+    {
+        return $this->belongsToMany (voucher::class , 'admin_voucher' ,  'voucher_id', 'user_id');
+    }
 }

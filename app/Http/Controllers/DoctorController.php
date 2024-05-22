@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class DoctorController extends Controller
 {
     public function index(){
         $doctors = DB::table('doctors')->get();
-        return response()->json(['doctors' => $doctors]);
+        return response()->json(['success' => true,'doctors' => $doctors]);
     }
 
 
@@ -24,7 +23,7 @@ class DoctorController extends Controller
             ->pluck('appointment_id');
     
         if ($doctorAppointments->isEmpty()) {
-            return response()->json(['error' => 'No appointments made'], 404);
+            return response()->json(['success'=> false ,'error' => 'No appointments made'], 404);
         }
     
         $parents = DB::table('sessions')
@@ -73,7 +72,7 @@ class DoctorController extends Controller
             $response[] = $responseItem;
         }
     
-        return response()->json(['Patient list' => $response]);
+        return response()->json(['success' => true,'Patient list' => $response]);
     }
     
     

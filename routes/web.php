@@ -72,7 +72,7 @@ Route::group(['prefix' => 'feedbacks'], function () {
     Route::post('/showFeedback', [FeedbackController::class, 'show']); // show a specific feedback
 });
 Route::group(['prefix'=>'cart'], function(){
-    Route::post('/', [CartController::class, 'index']); // Get all items in cart
+    Route::get('/', [CartController::class, 'index']); // Get all items in cart
     Route::post('/productToCart', [CartController::class, 'productToCart']); //parent can reserve a product
     Route::put('/editCart', [CartController::class, 'editCart']); //parent can edit product quantity in cart
     Route::delete('/deleteProduct', [CartController::class, 'deleteProduct']);

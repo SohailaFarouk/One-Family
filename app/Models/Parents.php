@@ -48,7 +48,7 @@ class Parents extends Model
     }
     public function voucher()
     {
-        return $this->belongsTo(Voucher::class);
+        return $this->belongsToMany (Voucher::class , 'parent_voucher' , 'user_id' , 'voucher_id');
     }
     public function feedback()
     {

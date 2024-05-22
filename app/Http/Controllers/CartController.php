@@ -16,13 +16,11 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $user_id = $request->header('user_id');
-    
         
-        // Check if the parent has a cart
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
         
         if (!$cart) {
-            return response()->json(['error' => 'Cart not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Cart not found'], 404);
         }
     
         // Get the session for the user
@@ -32,14 +30,14 @@ class CartController extends Controller
         $parentProduct = DB::table('parent_product')->where('user_id', $user_id)->first();
     
         if (!$parentProduct) {
-            return response()->json(['error' => 'Parent product not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Parent product not found'], 404);
         }
     
         // Get the product details for the parent's product
         $product = DB::table('products')->where('product_id', $parentProduct->product_id)->first();
     
         if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Product not found'], 404);
         }
     
         // Get the parent's event ID
@@ -48,7 +46,7 @@ class CartController extends Controller
         // Get the event details
         $event = DB::table('events')->where('event_id', $parentEventId)->first();
     
-        return response()->json([
+        return response()->json(['success' => true,
             'cart' => $cart,
             'session' => $session,
             'product' => [
@@ -77,7 +75,7 @@ class CartController extends Controller
     ]);
 
     if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()->first()], 422);
+        return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
     }
 
     $product_id = $request->input('product_id');
@@ -86,11 +84,11 @@ class CartController extends Controller
     $product = Product::find($product_id);
 
     if (!$product) {
-        return response()->json(['error' => 'Product not available'], 404);
+        return response()->json(['success'=> false ,'error' => 'Product not available'], 404);
     }
 
     if ($product->quantity < $quantity) {
-        return response()->json(['error' => 'Insufficient product quantity'], 400); // Use 400 for Bad Request
+        return response()->json(['success'=> false ,'error' => 'Insufficient product quantity'], 400); // Use 400 for Bad Request
     }
 
     $cart = Cart::where('user_id', $user_id)->first();
@@ -102,7 +100,7 @@ class CartController extends Controller
         ->first();
 
     if ($productInCart) {
-        return response()->json([
+        return response()->json(['success'=> false ,
             'message' => 'Product already added to your cart',
             'product' => [
                 'product_id' => $product->product_id,
@@ -113,7 +111,7 @@ class CartController extends Controller
                 'product_type' => $product->product_type,
                 'product_image' => $product->product_image,
                 'quantity' => $quantity // Use the input quantity instead
-            ]
+            ],'cart_id'=>$cart->cart_id
         ], 200);
     }
 
@@ -131,7 +129,7 @@ class CartController extends Controller
             ->where('user_id', $user_id)
             ->where('product_id', $product_id)
             ->value('quantity'); // Get updated quantity from parent_product
-        return response()->json([
+        return response()->json(['success' => true,
             'message' => 'Product reserved and Cart updated successfully',
             'product' => [
                 'product_id' => $product->product_id,
@@ -153,7 +151,7 @@ class CartController extends Controller
     ]);
     $cart->save();
     $product->cart()->attach($cart->cart_id);
-    return response()->json([
+    return response()->json(['success' => true,
         'message' => 'Product reserved and added to cart successfully',
         'product' => [
             'product_id' => $product->product_id,
@@ -179,19 +177,19 @@ class CartController extends Controller
       ]);
     
       if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()->first()], 422);
+        return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
       }
     
       $session = Session::find($request->session_id);
     
       // Check if session already belongs to the user
       if ($session->user_id === $user_id) {
-        return response()->json(['message' => 'Session Already Reserved', 'session' => $session], 400);
+        return response()->json(['success'=> false ,'message' => 'Session Already Reserved', 'session' => $session], 400);
       }
     
       // Check if session is available (not reserved by another user)
       if ($session->user_id !== null) {
-        return response()->json(['message' => 'Session Not Available'], 400);
+        return response()->json(['success'=> false ,'message' => 'Session Not Available'], 400);
       }
     
       $totalAmount = $session->session_fees;
@@ -209,15 +207,14 @@ class CartController extends Controller
       // Save cart and update session with cart association
       if (!$cart->save()) {
         // Handle saving cart errors (consider logging)
-        return response()->json(['error' => 'Failed to save cart'], 500);
+        return response()->json(['success'=> false ,'error' => 'Failed to save cart'], 500);
       }
     
       Session::where('session_id', $request->session_id)
         ->update(['cart_id' => $cart->cart_id, 'user_id' => $user_id]);
     
-      $message = 'Session reserved and added to cart successfully';
     
-      return response()->json(['message' => $message, 'session' => $session], 200);
+      return response()->json(['success' => true,'message' => 'Session reserved and added to cart successfully', 'session' => $session], 200);
     }
     
     /* -------------------------------------------------------------------------- */
@@ -231,15 +228,15 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
         $event = Event::find($request->event_id);
 
         if ($event->event_status === 'Cancelled') {
-            return response()->json(['message' => 'Event is cancelled'], 400);
+            return response()->json(['success'=> false ,'message' => 'Event is cancelled'], 400);
         }
         if ($event->event_status === 'Completed') {
-            return response()->json(['message' => 'Event is finished'], 400);
+            return response()->json(['success'=> false ,'message' => 'Event is finished'], 400);
         }
 
         $cart = Cart::where('user_id', $user_id)->first();
@@ -248,7 +245,7 @@ class CartController extends Controller
             ->where('user_id', $user_id)
             ->update(['event_id' => $request->event_id]);
         if ($cart && $event_cart) {
-            return response()->json(['message' => 'Event Already Reserved', 'event' => $event], 400);
+            return response()->json(['success'=> false ,'message' => 'Event Already Reserved', 'event' => $event], 400);
         }
 
         if ($cart) {
@@ -256,14 +253,17 @@ class CartController extends Controller
             $cart->save();
             Cart::where('user_id',$user_id)
                 ->update(['event_id' => $event->event_id]);
-            return response()->json(['message' => 'Event reserved and Cart updated successfully', 'event' => $event], 200);
-        }
+            return response()->json(['success' => true,'message' => 'Event reserved and Cart updated successfully', 'event' => $event], 200);
+        } else{
         //if user doesn't have items in cart create new cart
         $cart = new Cart();
         $cart->total_amount += $event->event_price; // Set initial total amount
         $cart->user_id = $user_id;
         $cart->event_id = $event->event_id;
         $cart->save();
+        return response()->json(['success' => true,'message' => 'Event reserved and Cart created successfully', 'event' => $event, 'cart' => $cart], 201);
+
+    }
     }
     /* -------------------------------------------------------------------------- */
     /* --------------------------- edit product from cart -------------------------- */
@@ -277,7 +277,7 @@ class CartController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         $product_id = $request->input('product_id');
@@ -286,13 +286,13 @@ class CartController extends Controller
         // Find product
         $product = DB::table('products')->where('product_id', $product_id)->first();
         if (!$product) {
-            return response()->json(['error' => 'Product not available'], 404);
+            return response()->json(['success'=> false ,'error' => 'Product not available'], 404);
         }
     
         // Find user's cart
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
         if (!$cart) {
-            return response()->json(['error' => 'Cart not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Cart not found'], 404);
         }
     
         // Find existing product in cart
@@ -302,7 +302,7 @@ class CartController extends Controller
             ->first();
     
         if (!$existingProduct) {
-            return response()->json(['error' => 'Product not reserved'], 404);
+            return response()->json(['success'=> false ,'error' => 'Product not reserved'], 404);
         }
     
         // Calculate quantity difference
@@ -334,7 +334,7 @@ class CartController extends Controller
             ->where('cart_id', $cart->cart_id)
             ->update(['total_amount' => $newTotal]);
     
-        return response()->json(['message' => 'Cart updated successfully', 'cart' => $cart], 200);
+        return response()->json(['success' => true,'message' => 'Cart updated successfully', 'cart' => $cart], 200);
     }
     
     /* -------------------------------------------------------------------------- */
@@ -347,7 +347,7 @@ class CartController extends Controller
       ]);
     
       if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()->first()], 422);
+        return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
       }
     
       // Extract user and product IDs
@@ -357,7 +357,7 @@ class CartController extends Controller
       $cart = Cart::where('user_id', $user_id)->first();
     
       if (!$cart) {
-        return response()->json(['error' => 'Cart not found'], 404);
+        return response()->json(['success'=> false ,'error' => 'Cart not found'], 404);
       }
     
       $cart_id = $cart->cart_id;
@@ -373,7 +373,7 @@ class CartController extends Controller
         ->first();
     
       if (!$existingProduct) {
-        return response()->json(['error' => 'Product not found in the cart'], 404);
+        return response()->json(['success'=> false ,'error' => 'Product not found in the cart'], 404);
       }
     
       // Retrieve the product's price
@@ -406,7 +406,7 @@ class CartController extends Controller
           $cart->update(['total_amount' => $newTotalAmount]);
         }
       }
-      return response()->json(['message' => 'Product deleted from cart successfully'], 200);
+      return response()->json(['success' => true,'message' => 'Product deleted from cart successfully'], 200);
     }
     /* -------------------------------------------------------------------------- */
     /* ------------------------- delete event from cart ------------------------- */
@@ -419,14 +419,14 @@ class CartController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         $event_id = $request->input('event_id');
     
         $cart = Cart::where('user_id', $user_id)->first();
         if (!$cart) {
-            return response()->json(['error' => 'Cart not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Cart not found'], 404);
         }
     
         // Detach the event from the cart using DB facade
@@ -440,7 +440,7 @@ class CartController extends Controller
         $newTotalAmount = max(0, $cart->total_amount - $eventPrice);
         DB::table('carts')->where('cart_id', $cart->cart_id)->update(['total_amount' => $newTotalAmount]);
     
-        return response()->json(['message' => 'Event deleted from cart successfully'], 200);
+        return response()->json(['success' => true,'message' => 'Event deleted from cart successfully'], 200);
     }
     /* -------------------------------------------------------------------------- */
     /* ------------------------ delete session from cart ------------------------ */
@@ -453,7 +453,7 @@ class CartController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         $session_id = $request->input('session_id');
@@ -461,13 +461,13 @@ class CartController extends Controller
         // Get the session associated with the user
         $session = Session::where('user_id', $user_id)->where('session_id', $session_id)->first();
         if (!$session) {
-            return response()->json(['error' => 'Session not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Session not found'], 404);
         }
     
         // Get the cart associated with the user
         $cart = Cart::where('user_id', $user_id)->first();
         if (!$cart) {
-            return response()->json(['error' => 'Cart not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Cart not found'], 404);
         }
     
         // Detach the session from the cart using DB facade
@@ -481,6 +481,6 @@ class CartController extends Controller
         $newTotalAmount = max(0, $cart->total_amount - $sessionPrice);
         DB::table('carts')->where('cart_id', $cart->cart_id)->update(['total_amount' => $newTotalAmount]);
     
-        return response()->json(['message' => 'Session deleted from cart successfully'], 200);
+        return response()->json(['success' => true,'message' => 'Session deleted from cart successfully'], 200);
     }
 }

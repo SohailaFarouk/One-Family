@@ -11,7 +11,7 @@ class FeedbackController extends Controller
 {
     public function index(){
         $feedback = DB::table('feedbacks')->get();
-        return response()->json(['feedback' => $feedback]);
+        return response()->json(['success' => true,'feedback' => $feedback]);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -23,7 +23,7 @@ class FeedbackController extends Controller
         ]);    
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         $feedbackId = $request->input('feedback_id');    
@@ -31,7 +31,7 @@ class FeedbackController extends Controller
         $feedback = Feedback::find($feedbackId);
     
         if ($feedback == null) {
-            return response()->json(["error" => "Feedback not found"], 404);
+            return response()->json(['success'=> false ,"error" => "Feedback not found"], 404);
         }
     
         // Insert into admin_feedback table
@@ -40,7 +40,7 @@ class FeedbackController extends Controller
             'user_id' => $user_id,
         ]);
     
-        return response()->json(["feedback" => $feedback]);
+        return response()->json(['success' => true,"feedback" => $feedback]);
     }
     /* -------------------------------------------------------------------------- */
     public function makeFeedback(Request $request){
@@ -53,7 +53,7 @@ class FeedbackController extends Controller
         
         
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
         $feedbackId = DB::table('feedbacks')->insertGetId([
             'order_id' => $request->input('order_id'),
@@ -66,7 +66,7 @@ class FeedbackController extends Controller
         ]);
 
     // Return a success response
-    return response()->json(['success' => 'Thanks for your feedback'], 200);
+    return response()->json(['success' => true,'message' => 'Thanks for your feedback'], 200);
 
     
     

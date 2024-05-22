@@ -10,6 +10,7 @@ class Voucher extends Model
     use HasFactory;
     public $timestamps = false;
     public $primaryKey = 'voucher_id';
+    protected $table = 'vouchers';
     protected $fillable=[
         'voucher_code',
         'voucher_percentage'
@@ -19,8 +20,12 @@ class Voucher extends Model
     {
         return $this->hasMany(Payment::class);
     }
-    public function parent()
+    public function parents()
     {
-        return $this->hasMany(Parents::class);
+        return $this->belongsToMany (Parents::class , 'parent_voucher' ,  'voucher_id', 'user_id');
+    }
+    public function admin()
+    {
+        return $this->belongsToMany (admin::class , 'admin_voucher' ,  'voucher_id', 'user_id');
     }
 }

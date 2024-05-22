@@ -10,6 +10,7 @@ class Session extends Model
     use HasFactory;
     public $timestamps = false;
     protected $primaryKey = 'session_id';
+    protected $table = 'sessions';
     protected $fillable = [
         'appointment_id',
         'user_id',

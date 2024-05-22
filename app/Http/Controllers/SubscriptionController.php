@@ -26,7 +26,7 @@ class SubscriptionController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()], 422);
         }
     
         $subscription = new Subscription();
@@ -34,7 +34,7 @@ class SubscriptionController extends Controller
         $subscription->subscription_price = $request->input('subscription_price');
         $subscription->save();
         
-        return response()->json([  'subscription details'=>[
+        return response()->json([  'success' => true,'subscription details'=>[
             'subscription_plan' => $subscription->subscription_plan,
             'subscription_price' => $subscription->subscription_price,]
         ]);
@@ -50,7 +50,7 @@ class SubscriptionController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success' => false,'error' => $validator->errors()->first()], 422);
         }
     
         $subscription = Subscription::find($request->input('subscription_id'));
@@ -59,7 +59,7 @@ class SubscriptionController extends Controller
         $parent = Parents::where('user_id', $user_id)->first();
     
         if (!$parent) {
-            return response()->json(['error' => 'Parent not found.'], 404);
+            return response()->json(['success'=> false ,'error' => 'Parent not found.'], 404);
         }
     
         // Check if the parent already has a subscription
@@ -72,14 +72,8 @@ class SubscriptionController extends Controller
                     'subscription_date' => $subscriptionDate,
                 ]);
     
-            return response()->json(['message' => 'Subscription updated successfully' ,
+            return response()->json(['success' => true,'message' => 'Subscription updated successfully' ,
             'subscription details'=> $subscription]);
-        } else {
-            // Create a new subscription for the parent
-            $parent->subscription_id = $request->input('subscription_id');
-            $parent->subscription_date = $subscriptionDate;
-            $parent->save();
-            return response()->json(['message' => 'You subscribed successfully']);
-        }
+        } 
     }
 }

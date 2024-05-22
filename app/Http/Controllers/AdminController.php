@@ -26,7 +26,7 @@ class AdminController extends Controller
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
+            return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
         $userId = $request->input('user_id');
@@ -66,7 +66,7 @@ class AdminController extends Controller
                 ->update($updates);
         }
     
-        return response()->json(['message' => 'User data updated successfully' , 'updates' => $updates]);
+        return response()->json(['success' => true,'message' => 'User data updated successfully' , 'updates' => $updates]);
     }
   
 
@@ -74,16 +74,15 @@ class AdminController extends Controller
 public function deleteParent(Request $request)
 {
   $validator = Validator::make($request->all(), [
-    'user_id' => 'required|exists:users,user_id',  // Validate user ID existence
+    'user_id' => 'required|exists:users,user_id'
   ]);
 
   if ($validator->fails()) {
-    return response()->json(['error' => $validator->errors()->first()], 422);
+    return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
   }
 
   $userId = $request->input('user_id');
 
-  // Delete sessions associated with user's appointments
   DB::table('sessions')
     ->whereIn('appointment_id', function ($query) use ($userId) {
       $query->select('appointment_id')
@@ -124,7 +123,7 @@ public function deleteParent(Request $request)
     ->where('user_id', $userId)
     ->delete();
 
-  return response()->json(['message' => 'User deleted successfully']);
+  return response()->json(['success' => true,'message' => 'User deleted successfully']);
 }
 
 }

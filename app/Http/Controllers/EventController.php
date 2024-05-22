@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +12,7 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::get();
-        return response()->json(['events' => $events]);
+        return response()->json(['success'=> true ,'events' => $events]);
     }
 
 
@@ -34,7 +33,7 @@ class EventController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['success'=> false ,'errors' => $validator->errors()], 422);
         }
 
         $event = new Event();
@@ -54,7 +53,7 @@ class EventController extends Controller
             ->update(['event_id' => $event->event_id]);        
         }
         
-        return response()->json(['message' => 'event created successfully', 'event' => $event], 201);
+        return response()->json(['success' => true,'message' => 'event created successfully', 'event' => $event], 201);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -63,16 +62,16 @@ class EventController extends Controller
         $event_id = $request->input('event_id');
         $event = Event::find($event_id);
         if ($event == null) {
-            return response()->json(["message" => "event not found"], 404);
+            return response()->json(['success'=> false ,"message" => "event not found"], 404);
         }
-        return response()->json(["event" => $event]);
+        return response()->json(['success' => true,"event" => $event]);
     }
 
     /* -------------------------------------------------------------------------- */
     public function edit(string $event_id)
     {
         $event = Event::findOrFail($event_id);
-        return response()->json(["event" => $event]);
+        return response()->json(['success' => true,"event" => $event]);
     }
 
 
@@ -84,7 +83,7 @@ class EventController extends Controller
         $event_id = $request->input('event_id');
         $event = Event::find($event_id);
         if (!$event) {
-            return response()->json(['error' => 'event not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'event not found'], 404);
         }
 
         if ($request->filled('event_name')) {
@@ -111,7 +110,7 @@ class EventController extends Controller
 
         $event->save();
 
-        return response()->json(['message' => 'event updated successfully', 'event' => $event]);
+        return response()->json(['success' => true,'message' => 'event updated successfully', 'event' => $event]);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -121,7 +120,7 @@ class EventController extends Controller
         $event = Event::find($event_id);
 
         if (!$event) {
-            return response()->json(['error' => 'event not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'event not found'], 404);
         }
 
         $event->delete();

@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::get();
-        return response()->json(['products' => $products]);
+        return response()->json(['success' => true,'products' => $products]);
     }
     /* -------------------------------------------------------------------------- */
     public function store(Request $request)
@@ -30,7 +30,7 @@ class ProductController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['success'=> false ,'errors' => $validator->errors()], 422);
         }
         $product = new Product();
         $product->product_name = $request->input('product_name');
@@ -41,14 +41,15 @@ class ProductController extends Controller
         $product->quantity = $request->input('quantity');
 
         if ($request->hasFile('product_image')) {
-            $imagePath = $request->file('product_image')->store('product_images');
+            $imagePath = $request->file('product_image')->store('uploads', 'public');
             $product->product_image = $imagePath;
         }
+
         $product->save();
 
         $product->admin()->attach($user_id);
 
-        return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
+        return response()->json(['success' => true,'message' => 'Product created successfully', 'product' => $product], 201);
     }
     /* -------------------------------------------------------------------------- */
     public function show(request $request)
@@ -56,15 +57,15 @@ class ProductController extends Controller
         $product_id = $request->input('product_id');
         $product = Product::find($product_id);
         if ($product == null) {
-            return response()->json(["message" => "product not found"], 404);
+            return response()->json(['success'=> false ,"message" => "product not found"], 404);
         }
-        return response()->json(["product" => $product]);
+        return response()->json(['success' => true,"product" => $product]);
     }
     /* -------------------------------------------------------------------------- */
     public function edit(string $product_id)
     {
         $product = Product::findOrFail($product_id);
-        return response()->json(["product" => $product]);
+        return response()->json(['success' => true,"product" => $product]);
     }
     /* -------------------------------------------------------------------------- */
     public function update(Request $request)
@@ -73,7 +74,7 @@ class ProductController extends Controller
         $product_id = $request->input('product_id');
         $product = Product::find($product_id);
         if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Product not found'], 404);
         }
 
         if ($request->filled('product_name')) {
@@ -101,7 +102,7 @@ class ProductController extends Controller
 
         $product->save();
 
-        return response()->json(['message' => 'Product updated successfully', 'product' => $product]);
+        return response()->json(['success' => true,'message' => 'Product updated successfully', 'product' => $product]);
     }
     /* -------------------------------------------------------------------------- */
     public function destroy(Request $request)
@@ -110,15 +111,15 @@ class ProductController extends Controller
         $product = Product::find($product_id);
 
         if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'Product not found'], 404);
         }
 
         $product->delete();
         DB::statement('ALTER TABLE products AUTO_INCREMENT = 1');
 
-        return response()->json(['message' => 'Product deleted successfully']);
+        return response()->json(['success' => true,'message' => 'Product deleted successfully']);
     }
     /* -------------------------------------------------------------------------- */
-    
-    
+
+
 }

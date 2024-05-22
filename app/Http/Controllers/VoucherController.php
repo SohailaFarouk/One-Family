@@ -13,13 +13,14 @@ class VoucherController extends Controller
     public function index()
     {
         $vouchers = Voucher::get();
-        return response()->json(['vouchers' => $vouchers]);
+        return response()->json(['success' => true,'vouchers' => $vouchers]);
     }
 
     /* -------------------------------------------------------------------------- */
     public function store(Request $request)
     {
-        // Validate the incoming request data
+        $user_id = $request->header('user_id');
+        
         $validator = Validator::make($request->all(), [
             'voucher_code' => 'required|string|max:255',
             'voucher_percentage' => 'required|numeric|min:0|max:100'
@@ -34,7 +35,9 @@ class VoucherController extends Controller
         $voucher->voucher_percentage = $request->input('voucher_percentage');
         
         $voucher->save();
-        return response()->json(['message' => 'voucher created successfully', 'voucher' => $voucher], 201);
+        $voucher->admin()->attach($user_id);
+
+        return response()->json(['success' => true,'message' => 'voucher created successfully', 'voucher' => $voucher], 201);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -45,20 +48,19 @@ class VoucherController extends Controller
         if ($voucher == null) {
             return response()->json(["message" => "voucher not found"], 404);
         }
-        return response()->json(["voucher" => $voucher]);
+        return response()->json(['success' => true,"voucher" => $voucher]);
     }
 
     /* -------------------------------------------------------------------------- */
     public function edit(string $voucher_id)
     {
         $voucher = Voucher::findOrFail($voucher_id);
-        return response()->json(["voucher" => $voucher]);
+        return response()->json(['success' => true,"voucher" => $voucher]);
     }
 
     /* -------------------------------------------------------------------------- */
     public function update(Request $request)
     {
-
         $voucher_id = $request->input('voucher_id');
         $voucher = Voucher::find($voucher_id);
         if (!$voucher) {
@@ -74,7 +76,7 @@ class VoucherController extends Controller
 
         $voucher->save();
 
-        return response()->json(['message' => 'voucher updated successfully', 'voucher' => $voucher]);
+        return response()->json(['success' => true,'message' => 'voucher updated successfully', 'voucher' => $voucher]);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -84,12 +86,12 @@ class VoucherController extends Controller
         $voucher = Voucher::find($voucher_id);
 
         if (!$voucher) {
-            return response()->json(['error' => 'voucher not found'], 404);
+            return response()->json(['success'=> false ,'error' => 'voucher not found'], 404);
         }
 
         $voucher->delete();
         DB::statement('ALTER TABLE vouchers AUTO_INCREMENT = 1');
 
-        return response()->json(['message' => 'voucher deleted successfully']);
+        return response()->json(['success'=> true ,'message' => 'voucher deleted successfully']);
     }
 }
