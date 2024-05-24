@@ -96,6 +96,7 @@ Route::post('/subscriptionplans',[SubscriptionController::class, 'subscriptionCa
 
 Route::post('/subscribe',[SubscriptionController::class, 'subscribe']);
 
+Route::get('/AllOrders',[OrderController::class, 'index']);
 Route::post('/confirmOrder',[OrderController::class, 'confirmOrder']);
 
 Route::get('/AllDoctors',[DoctorController::class,'index']);

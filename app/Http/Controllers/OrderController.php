@@ -14,6 +14,26 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $orders = Order::all();
+    
+        if ($orders->isEmpty()) {
+            return response()->json(['success' => false, 'error' => 'No orders found'], 404);
+        }
+            $allOrders = $orders->map(function($order) {
+            $orderDetails = json_decode($order->order_details, true);
+            return [
+                'order_id' => $order->order_id,
+                'cart_id' => $order->cart_id,
+                'order_amount' => $order->order_amount,
+                'order_details' => $orderDetails
+            ];
+        });
+    
+        return response()->json(['success' => true, 'orders' => $allOrders], 200);
+    }
+    
     public function confirmOrder(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -23,7 +43,6 @@ class OrderController extends Controller
             return response()->json(['success'=> false ,'error' => $validator->errors()->first()], 422);
         }
     
-        // Find the cart
         $cart = Cart::find($request->input('cart_id'));
     
         // Check if an order already exists for this cart

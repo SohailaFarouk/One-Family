@@ -16,13 +16,7 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $user_id = $request->header('user_id');
-<<<<<<< HEAD
         
-=======
-    
-        
-        // Check if the parent has a cart
->>>>>>> origin/main
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
         
         if (!$cart) {
@@ -314,16 +308,24 @@ class CartController extends Controller
         // Calculate quantity difference
         $quantityDifference = $quantity - $existingProduct->quantity;
     
-        // Update product quantity in parent_product table
-        DB::table('parent_product')
-            ->where('user_id', $user_id)
-            ->where('product_id', $product_id)
-            ->update(['quantity' => $quantity]);
-    
-        // Update product quantity in products table (same as before)
-        DB::table('products')
-            ->where('product_id', $product_id)
-            ->decrement('quantity', abs($quantityDifference));
+       // Update the quantity based on the difference
+       if($product->quantity < $quantity){
+        return response()->json(['success'=> false ,'error' => 'Insufficient product quantity'], 404);
+    }
+if ($quantityDifference > 0 && $product->quantity !=0) {
+    DB::table('products')
+        ->where('product_id', $product_id)
+        ->decrement('quantity', $quantityDifference);
+} elseif ($quantityDifference < 0 && $product->quantity !=0 ) {
+    DB::table('products')
+        ->where('product_id', $product_id)
+        ->increment('quantity', abs($quantityDifference));
+}
+    // Update product quantity in parent_product table
+    DB::table('parent_product')
+    ->where('user_id', $user_id)
+    ->where('product_id', $product_id)
+    ->update(['quantity' => $quantity]);
     
         // Update total amount in the cart
     
@@ -340,7 +342,7 @@ class CartController extends Controller
             ->where('cart_id', $cart->cart_id)
             ->update(['total_amount' => $newTotal]);
     
-        return response()->json(['success' => true,'message' => 'Cart updated successfully', 'cart' => $cart], 200);
+        return response()->json(['success' => true,'message' => 'Cart updated successfully', 'total_amount' => $newTotal], 200);
     }
     
     /* -------------------------------------------------------------------------- */
