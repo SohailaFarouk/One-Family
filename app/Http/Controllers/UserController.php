@@ -26,13 +26,13 @@ class UserController extends Controller
         'date_of_birth' => 'required|date',
         'address' => 'required|string|max:255',
         'nat_id' => 'required|numeric',
-        'gender' => 'required|string|in:male,female,other',
-        'marital_status' => 'required|string|in:single,married,divorced,widowed',
+        'gender' => 'required|string|in:male,female',
+        'marital_status' => 'required|string|in:single,married',
         'phone_number' => 'required|digits:11',
         'number_of_children' => 'nullable|numeric|min:1',
         'children_names.*' => 'nullable|string|max:255',
         'children_date_of_birth.*' => 'nullable|date_format:Y-m-d',
-        'children_genders.*' => 'nullable|in:male,female,other',
+        'children_genders.*' => 'nullable|in:male,female',
     ]);
 
     if ($validator->fails()) {

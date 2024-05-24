@@ -16,7 +16,13 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $user_id = $request->header('user_id');
+<<<<<<< HEAD
         
+=======
+    
+        
+        // Check if the parent has a cart
+>>>>>>> origin/main
         $cart = DB::table('carts')->where('user_id', $user_id)->first();
         
         if (!$cart) {
